@@ -199,20 +199,8 @@
     @apply w-1 bg-accent-400 rounded-full animate-pulse;
   }
 
-  /* Cursor hide on touch devices or custom cursor */
-  @media (pointer: fine) {
-    .custom-cursor-active {
-      cursor: none;
-    }
-    .custom-cursor-active a,
-    .custom-cursor-active button,
-    .custom-cursor-active input,
-    .custom-cursor-active textarea,
-    .custom-cursor-active [role="button"] {
-      cursor: none;
-    }
-  }
 }
+
 
 /* ─── Utilities Layer ───────────────────────────────────────────────────────── */
 @layer utilities {
