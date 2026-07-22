@@ -12,7 +12,9 @@ class Config:
         "DATABASE_URL", f"sqlite:///{os.path.join(BASE_DIR, 'ai_assistant.db')}"
     )
     if db_url.startswith("postgresql://"):
-        db_url = db_url.replace("postgresql://", "postgresql+psycopg2://", 1)
+        db_url = db_url.replace("postgresql://", "postgresql+psycopg://", 1)
+    elif db_url.startswith("postgresql+psycopg2://"):
+        db_url = db_url.replace("postgresql+psycopg2://", "postgresql+psycopg://", 1)
     SQLALCHEMY_DATABASE_URI = db_url
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     UPLOAD_FOLDER = os.path.join(BASE_DIR, os.getenv("UPLOAD_FOLDER", "uploads"))

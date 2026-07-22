@@ -12,8 +12,10 @@ services:
         value: "False"
       - key: SECRET_KEY
         generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.11.9
       - key: DATABASE_URL
-        value: postgresql+psycopg2://storage_f2sh_user:xHlmJmAWEg6EbUKELmONAe3PaqZenQ8n@dpg-d9g4olkm0tmc73b95c90-a.oregon-postgres.render.com/storage_f2sh
+        value: postgresql+psycopg://storage_f2sh_user:xHlmJmAWEg6EbUKELmONAe3PaqZenQ8n@dpg-d9g4olkm0tmc73b95c90-a.oregon-postgres.render.com/storage_f2sh
       - key: UPLOAD_FOLDER
         value: uploads
       - key: MAX_CONTENT_LENGTH
