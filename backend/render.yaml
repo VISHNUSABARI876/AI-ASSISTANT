@@ -13,7 +13,7 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: DATABASE_URL
-        value: sqlite:///ai_assistant.db
+        value: postgresql+psycopg2://storage_f2sh_user:xHlmJmAWEg6EbUKELmONAe3PaqZenQ8n@dpg-d9g4olkm0tmc73b95c90-a.oregon-postgres.render.com/storage_f2sh
       - key: UPLOAD_FOLDER
         value: uploads
       - key: MAX_CONTENT_LENGTH
