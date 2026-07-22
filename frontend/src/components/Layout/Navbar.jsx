@@ -47,12 +47,12 @@ export default function Navbar({ onMenuClick, onOpenPalette }) {
   }
 
   return (
-    <header className="sticky top-0 z-30 h-16 bg-[#050816]/80 backdrop-blur-2xl border-b border-white/10 flex items-center px-4 sm:px-6 justify-between gap-4">
+    <header className="sticky top-0 z-30 h-16 bg-white/80 dark:bg-[#050816]/80 backdrop-blur-2xl border-b border-slate-200 dark:border-white/10 flex items-center px-4 sm:px-6 justify-between gap-4 transition-colors">
       {/* Left: Mobile Menu & Current Route Title */}
       <div className="flex items-center gap-3">
         <button
           onClick={onMenuClick}
-          className="lg:hidden btn-os-ghost p-2 rounded-xl text-slate-300 hover:text-white"
+          className="lg:hidden btn-os-ghost p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
           aria-label="Toggle Navigation"
         >
           <Menu className="w-5 h-5" />
@@ -63,55 +63,47 @@ export default function Navbar({ onMenuClick, onOpenPalette }) {
             <Bot className="w-4 h-4 text-white" />
           </div>
           <div>
-            <h2 className="font-extrabold text-white text-sm sm:text-base leading-tight tracking-tight flex items-center gap-2">
+            <h2 className="font-extrabold text-slate-900 dark:text-white text-sm sm:text-base leading-tight tracking-tight flex items-center gap-2">
               {title}
             </h2>
           </div>
         </div>
 
         {/* AI OS Model Badge */}
-        <div className="hidden sm:flex items-center gap-2 ml-4 px-3 py-1 rounded-full bg-slate-900/90 border border-primary-500/30 text-xs font-semibold text-primary-300 shadow-glow">
-          <Cpu className="w-3.5 h-3.5 text-accent-400" />
+        <div className="hidden sm:flex items-center gap-2 ml-4 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-900/90 border border-primary-500/30 text-xs font-semibold text-primary-600 dark:text-primary-300 shadow-glow">
+          <Cpu className="w-3.5 h-3.5 text-accent-500 dark:text-accent-400" />
           <span>Llama 3</span>
-          <span className="flex items-center gap-1 text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-full border border-emerald-500/20">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+          <span className="flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-full border border-emerald-500/20">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-ping" />
             Online
           </span>
         </div>
       </div>
 
-      {/* Center: Command Palette Input */}
+      {/* Center/Right: AI OS Command Hub Button */}
       <button
         onClick={onOpenPalette}
-        className="hidden md:flex items-center gap-3 px-4 py-2 rounded-xl bg-slate-900/70 hover:bg-slate-800/90 text-slate-400 hover:text-slate-200 text-xs border border-white/10 transition-all shadow-inner w-64 lg:w-80 justify-between"
+        className="flex items-center gap-3 px-4 py-2 rounded-xl bg-gradient-to-r from-primary-500/10 via-accent-500/10 to-primary-500/10 dark:bg-slate-900/80 hover:bg-primary-500/20 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs border border-primary-500/30 dark:border-white/10 transition-all shadow-glow hover:shadow-glow-lg w-auto md:w-72 lg:w-80 justify-between group"
+        title="Open AI OS Command Hub (Ctrl + K)"
       >
-        <div className="flex items-center gap-2">
-          <Search className="w-4 h-4 text-slate-500" />
-          <span>Search tools, models, commands...</span>
+        <div className="flex items-center gap-2.5">
+          <Sparkles className="w-4 h-4 text-primary-500 dark:text-primary-400 group-hover:rotate-12 transition-transform" />
+          <span className="font-semibold text-slate-800 dark:text-slate-200">AI OS Command Hub</span>
         </div>
-        <kbd className="px-2 py-0.5 text-[10px] font-mono font-bold text-slate-300 bg-slate-800 rounded border border-white/10">
+        <kbd className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-mono font-extrabold text-primary-600 dark:text-primary-300 bg-white dark:bg-slate-800 rounded border border-primary-500/30 dark:border-white/10 shadow-sm">
           ⌘K
         </kbd>
       </button>
 
       {/* Right Controls */}
       <div className="flex items-center gap-2">
-        {/* Mobile Search button */}
-        <button
-          onClick={onOpenPalette}
-          className="md:hidden btn-os-ghost p-2 rounded-xl text-slate-300"
-          title="Search Command Palette"
-        >
-          <kbd className="px-2 py-0.5 text-[10px] font-mono bg-slate-800 rounded border border-white/10">⌘K</kbd>
-        </button>
-
         {/* Theme Toggle */}
         <button
           onClick={toggle}
-          className="btn-os-ghost p-2 rounded-xl text-slate-300 hover:text-white"
-          title={isDark ? 'Light Mode' : 'Dark Mode'}
+          className="btn-os-ghost p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+          title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
         >
-          {isDark ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-indigo-400" />}
+          {isDark ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-indigo-500" />}
         </button>
 
         {/* Notifications */}

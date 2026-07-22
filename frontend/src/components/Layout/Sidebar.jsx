@@ -59,7 +59,7 @@ export default function Sidebar({ isOpen, onClose }) {
       <aside
         className={`
           fixed top-0 left-0 h-full z-50 flex flex-col
-          bg-[#0A0F1E]/90 backdrop-blur-2xl border-r border-white/10
+          bg-white/90 dark:bg-[#0A0F1E]/90 backdrop-blur-2xl border-r border-slate-200 dark:border-white/10
           transition-all duration-300 ease-in-out shadow-card-os
           lg:translate-x-0 lg:static lg:z-auto
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
@@ -67,17 +67,17 @@ export default function Sidebar({ isOpen, onClose }) {
         `}
       >
         {/* Header & Logo */}
-        <div className="flex items-center justify-between px-4 py-5 border-b border-white/10">
+        <div className="flex items-center justify-between px-4 py-5 border-b border-slate-200 dark:border-white/10">
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 via-accent-500 to-secondary-500 flex items-center justify-center flex-shrink-0 shadow-glow animate-pulse-slow">
               <Bot className="w-6 h-6 text-white" />
             </div>
             {!collapsed && (
               <div className="min-w-0 animate-fade-in">
-                <h1 className="font-extrabold text-white text-base leading-tight tracking-tight flex items-center gap-1">
+                <h1 className="font-extrabold text-slate-900 dark:text-white text-base leading-tight tracking-tight flex items-center gap-1">
                   AI OS <Sparkles className="w-3.5 h-3.5 text-accent-400" />
                 </h1>
-                <p className="text-[11px] text-slate-400 font-mono truncate">Groq Engine v3</p>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono truncate">Groq Engine v3</p>
               </div>
             )}
           </div>
@@ -85,7 +85,7 @@ export default function Sidebar({ isOpen, onClose }) {
           {/* Desktop Collapse Toggle */}
           <button
             onClick={() => setCollapsed((p) => !p)}
-            className="hidden lg:flex items-center justify-center w-7 h-7 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors border border-white/10"
+            className="hidden lg:flex items-center justify-center w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors border border-slate-300 dark:border-white/10"
             title={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
           >
             {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
@@ -93,15 +93,15 @@ export default function Sidebar({ isOpen, onClose }) {
         </div>
 
         {/* User Card */}
-        <div className="p-3 border-b border-white/5">
-          <div className={`flex items-center gap-3 p-2 rounded-xl bg-slate-900/60 border border-white/5 ${collapsed ? 'justify-center' : ''}`}>
+        <div className="p-3 border-b border-slate-200 dark:border-white/5">
+          <div className={`flex items-center gap-3 p-2 rounded-xl bg-slate-100 dark:bg-slate-900/60 border border-slate-200 dark:border-white/5 ${collapsed ? 'justify-center' : ''}`}>
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-bold text-sm ring-2 ring-primary-500/40 shadow-glow flex-shrink-0">
               {user?.username?.[0]?.toUpperCase() || 'U'}
             </div>
             {!collapsed && (
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-bold text-white truncate">{user?.username || 'User'}</p>
-                <p className="text-[10px] text-slate-400 truncate">{user?.email || 'Active Session'}</p>
+                <p className="text-xs font-bold text-slate-900 dark:text-white truncate">{user?.username || 'User'}</p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{user?.email || 'Active Session'}</p>
               </div>
             )}
           </div>
