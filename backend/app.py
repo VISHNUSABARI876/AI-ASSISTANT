@@ -110,8 +110,9 @@ def create_app() -> Flask:
 
     @app.errorhandler(500)
     def internal_error(e):
-        logger.error(f"Internal server error: {e}")
-        return jsonify({"error": "An internal server error occurred."}), 500
+        import traceback
+        logger.error(f"Internal server error: {e}\n{traceback.format_exc()}")
+        return jsonify({"error": "An internal server error occurred.", "details": str(e)}), 500
 
     logger.info("AI Assistant backend initialized successfully.")
     return app
