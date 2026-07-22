@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: ai-assistant-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        value: sqlite:///ai_assistant.db
+      - key: UPLOAD_FOLDER
+        value: uploads
+      - key: MAX_CONTENT_LENGTH
+        value: "16777216"
+      - key: JWT_EXPIRY_HOURS
+        value: "24"
+      - key: GROQ_API_KEY
+        sync: false       # Set manually in Render dashboard
+      - key: GROQ_MODEL
+        value: llama-3.1-8b-instant
+      - key: GEMINI_API_KEY
+        sync: false       # Set manually in Render dashboard
+      - key: FRONTEND_URL
+        sync: false       # Set to your Vercel URL e.g. https://ai-assistant.vercel.app
