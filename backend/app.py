@@ -36,7 +36,7 @@ def create_app() -> Flask:
     Config.init_app(app)
 
     # ─── CORS ─────────────────────────────────────────────────────────────────
-    frontend_url = os.getenv("FRONTEND_URL", "")
+    frontend_url = os.getenv("FRONTEND_URL", "").rstrip("/")
     allowed_origins = [
         "http://localhost:3000",
         "http://127.0.0.1:3000",
@@ -44,15 +44,16 @@ def create_app() -> Flask:
         "http://127.0.0.1:3001",
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        r"https://.*\.vercel\.app"
     ]
     if frontend_url:
         allowed_origins.append(frontend_url)
 
     CORS(app, resources={
-        r"/api/*": {
-            "origins": allowed_origins,
+        r"/*": {
+            "origins": allowed_origins if not os.getenv("CORS_ALLOW_ALL") else "*",
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-            "allow_headers": ["Content-Type", "Authorization", "X-Requested-With"],
+            "allow_headers": ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
             "expose_headers": ["Content-Type", "Authorization"],
             "supports_credentials": True,
             "max_age": 3600

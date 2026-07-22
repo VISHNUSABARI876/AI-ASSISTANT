@@ -29,4 +29,4 @@ services:
       - key: GEMINI_API_KEY
         sync: false       # Set manually in Render dashboard
       - key: FRONTEND_URL
-        sync: false       # Set to your Vercel URL e.g. https://ai-assistant.vercel.app
+        value: https://ai-assistant-eight-mu.vercel.app
