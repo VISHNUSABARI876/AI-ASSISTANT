@@ -5,7 +5,6 @@ import Navbar from './components/Layout/Navbar'
 import ProtectedRoute from './components/Layout/ProtectedRoute'
 import GlobalBackground from './components/UI/GlobalBackground'
 
-import FloatingAIOrb from './components/UI/FloatingAIOrb'
 import CommandPalette from './components/UI/CommandPalette'
 
 import LoginPage from './pages/LoginPage'
@@ -56,9 +55,6 @@ function AppLayout({ children }) {
           {children}
         </main>
       </div>
-
-      {/* Floating AI Orb Assistant */}
-      <FloatingAIOrb />
 
       {/* Global Command Palette */}
       <CommandPalette isOpen={paletteOpen} onClose={() => setPaletteOpen(false)} />
