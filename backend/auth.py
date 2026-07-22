@@ -3,6 +3,7 @@ import bcrypt
 from datetime import datetime, timedelta, timezone
 from functools import wraps
 from flask import request, jsonify, current_app
+from database import db
 from models import User
 
 
@@ -43,7 +44,7 @@ def token_required(f):
         try:
             payload = decode_token(token, current_app.config["SECRET_KEY"])
             user_id = payload.get("sub")
-            current_user = User.query.get(user_id)
+            current_user = db.session.get(User, user_id)
             if current_user is None:
                 return jsonify({"error": "User not found"}), 401
         except jwt.ExpiredSignatureError:
