@@ -53,18 +53,66 @@ def _get_groq():
     return _groq_client
 
 
-def _call_groq(prompt: str, max_tokens: int = 512) -> Optional[str]:
+def _log_details(messages, model, response_text=None, exception=None):
+    """Log complete request and response/error details for audit."""
+    from flask import request, has_request_context
+    log_lines = []
+    log_lines.append("\n=================== AI SERVICE LOG START ===================")
+    
+    # 1. Incoming request details
+    if has_request_context():
+        log_lines.append(f"INCOMING REQUEST: {request.method} {request.url}")
+        log_lines.append(f"HEADERS: {dict(request.headers)}")
+    else:
+        log_lines.append("INCOMING REQUEST: (No active Flask request context)")
+        
+    # 2. Extract user message and system prompt
+    user_msg = ""
+    system_prompt = ""
+    for msg in messages:
+        if msg.get("role") == "system":
+            system_prompt = msg.get("content", "")
+        elif msg.get("role") == "user":
+            user_msg = msg.get("content", "")
+            
+    log_lines.append(f"USER MESSAGE: {user_msg}")
+    log_lines.append(f"SELECTED MODEL: {model}")
+    log_lines.append(f"SYSTEM PROMPT: {system_prompt}")
+    log_lines.append(f"REQUEST SENT TO GROQ: {messages}")
+    
+    if response_text is not None:
+        log_lines.append(f"GROQ RESPONSE: {response_text}")
+    
+    if exception is not None:
+        log_lines.append("EXCEPTION OCCURRED:")
+        log_lines.append(traceback.format_exc())
+        
+    log_lines.append("==================== AI SERVICE LOG END ====================\n")
+    logger.info("\n".join(log_lines))
+
+
+def _call_groq(prompt_or_messages, max_tokens: int = 512, system_prompt: Optional[str] = None) -> Optional[str]:
     """Call Groq and return the text response, or None on failure."""
     client = _get_groq()
+    
+    # Standardize messages format
+    if isinstance(prompt_or_messages, list):
+        messages = prompt_or_messages
+    else:
+        sys_content = system_prompt if system_prompt is not None else "You are a helpful AI assistant. Always respond with a clear, informative answer."
+        messages = [
+            {"role": "system", "content": sys_content},
+            {"role": "user", "content": prompt_or_messages}
+        ]
+
     if client is None:
+        logger.warning("Groq client not available, using fallback rule-based chat.")
         return None
+
     try:
         completion = client.chat.completions.create(
             model=_GROQ_MODEL,
-            messages=[
-                {"role": "system", "content": "You are a helpful AI assistant. Always respond with a clear, informative answer."},
-                {"role": "user", "content": prompt}
-            ],
+            messages=messages,
             max_tokens=max_tokens,
             temperature=0.7,
         )
@@ -74,12 +122,12 @@ def _call_groq(prompt: str, max_tokens: int = 512) -> Optional[str]:
             text = text.strip()
         if not text:
             logger.warning(f"Groq returned empty content. Finish reason: {choice.finish_reason}")
-            print(f"[Groq] Empty response — finish_reason={choice.finish_reason}, model={_GROQ_MODEL}")
+            _log_details(messages, _GROQ_MODEL, response_text="[EMPTY RESPONSE]", exception=None)
             return None
+        _log_details(messages, _GROQ_MODEL, response_text=text, exception=None)
         return text
     except Exception as exc:
-        traceback.print_exc()
-        logger.error(f"Groq API error: {exc}")
+        _log_details(messages, _GROQ_MODEL, response_text=None, exception=exc)
         return None
 
 
@@ -327,22 +375,241 @@ def _fallback_code(prompt: str, language: str) -> str:
 
 # ── Public API ────────────────────────────────────────────────────────────────
 
-def generate_chat_response(message: str) -> str:
-    """Generate a chat response using Groq, with rule-based fallback."""
-    groq_prompt = (
-        "You are a helpful, concise AI assistant. "
-        "Answer the user's message in plain text (no excessive markdown unless it helps readability). "
-        f"User: {message}"
+def build_system_prompt(custom_system_prompt: Optional[str] = None) -> str:
+    """Build the system prompt, prepending any custom persona prompt if present."""
+    general_prompt = (
+        "You are a friendly, helpful AI assistant. Answer accurately, naturally, and professionally. "
+        "Reply in the same language as the user's input whenever possible."
     )
-    result = _call_groq(groq_prompt, max_tokens=512)
-    if result:
-        return result
-    return _smart_chat(message)
+    if custom_system_prompt and custom_system_prompt.strip():
+        return f"{custom_system_prompt.strip()}\n\n{general_prompt}"
+    return general_prompt
+
+
+from services.search_service import search_web, format_search_context
+import services.cache_service as _cache
+
+
+def generate_response(
+    message: str,
+    history: Optional[list] = None,
+    enable_web_search: bool = False,
+    custom_system_prompt: Optional[str] = None,
+) -> str:
+    """Generate a chat response using Groq, with optional custom system persona and web search grounding."""
+    system_prompt = build_system_prompt(custom_system_prompt)
+
+    # Perform web search grounding if enabled
+    if enable_web_search:
+        logger.info(f"Performing real-time web search for query: {message}")
+        results = search_web(message)
+        search_ctx = format_search_context(results)
+        if search_ctx:
+            system_prompt += f"\n\n{search_ctx}"
+
+    # Construct messages list: 1 system prompt, optional history, 1 user message
+    messages = [{"role": "system", "content": system_prompt}]
+    if history:
+        for chat_item in history:
+            messages.append({"role": "user", "content": chat_item["message"]})
+            messages.append({"role": "assistant", "content": chat_item["response"]})
+    messages.append({"role": "user", "content": message})
+
+    # Check cache (only for simple single-turn requests without dynamic context)
+    _use_cache = not enable_web_search and not history
+    if _use_cache:
+        cached = _cache.get(message, context=system_prompt[:80])
+        if cached:
+            logger.info("Serving response from cache.")
+            return cached
+
+    # Call Groq API
+    final_result = _call_groq(messages, max_tokens=512)
+    
+    logger.info(
+        f"\n--- BACKEND LANGUAGE FLOW AUDIT ---\n"
+        f"System prompt: {system_prompt}\n"
+        f"Model used: {_GROQ_MODEL}\n"
+        f"------------------------------------"
+    )
+
+    if final_result:
+        if _use_cache:
+            _cache.set(message, final_result, context=system_prompt[:80])
+        return final_result
+        
+    fallback = _smart_chat(message)
+    if _use_cache:
+        _cache.set(message, fallback, context=system_prompt[:80], ttl=300)
+    return fallback
+
+
+def generate_chat_response(
+    message: str,
+    history: Optional[list] = None,
+    enable_web_search: bool = False,
+    custom_system_prompt: Optional[str] = None,
+) -> str:
+    """Compatibility alias mapping generate_chat_response to generate_response."""
+    return generate_response(
+        message=message,
+        history=history,
+        enable_web_search=enable_web_search,
+        custom_system_prompt=custom_system_prompt
+    )
+
+
+def stream_chat_response(
+    message: str,
+    history: Optional[list] = None,
+    enable_web_search: bool = False,
+    custom_system_prompt: Optional[str] = None,
+):
+    """Yield chunks of generated text for real-time SSE streaming response with optional persona and web search grounding."""
+    system_prompt = build_system_prompt(custom_system_prompt)
+
+    # Perform web search grounding if enabled
+    if enable_web_search:
+        logger.info(f"Performing real-time web search for query: {message}")
+        results = search_web(message)
+        search_ctx = format_search_context(results)
+        if search_ctx:
+            system_prompt += f"\n\n{search_ctx}"
+
+    # Construct messages list: 1 system prompt, optional history, 1 user message
+    messages = [{"role": "system", "content": system_prompt}]
+    if history:
+        for chat_item in history:
+            messages.append({"role": "user", "content": chat_item["message"]})
+            messages.append({"role": "assistant", "content": chat_item["response"]})
+    messages.append({"role": "user", "content": message})
+
+    # Check cache (only for simple single-turn requests without dynamic context)
+    _use_cache = not enable_web_search and not history
+    if _use_cache:
+        cached = _cache.get(message, context=system_prompt[:80])
+        if cached:
+            logger.info("Serving response from cache.")
+            return cached
+
+    # Call Groq API (first attempt)
+    result = _call_groq(messages, max_tokens=512)
+    
+    # Apply retry if needed
+    final_result, retry_occurred = retry_if_needed(
+        lang=lang,
+        response_text=result or "",
+        message=message,
+        history=history,
+        system_prompt=system_prompt
+    )
+    
+    final_response_lang = detect_language(final_result or "")
+    logger.info(
+        f"\n--- BACKEND LANGUAGE FLOW AUDIT ---\n"
+        f"Detected language: {lang}\n"
+        f"System prompt selected: {system_prompt}\n"
+        f"Model used: {_GROQ_MODEL}\n"
+        f"Final response language: {final_response_lang}\n"
+        f"------------------------------------"
+    )
+
+    if final_result:
+        if _use_cache:
+            _cache.set(message, final_result, context=system_prompt[:80])
+        return final_result
+        
+    fallback = _smart_chat(message)
+    if _use_cache:
+        _cache.set(message, fallback, context=system_prompt[:80], ttl=300)
+    return fallback
+
+
+def generate_chat_response(
+    message: str,
+    history: Optional[list] = None,
+    enable_web_search: bool = False,
+    custom_system_prompt: Optional[str] = None,
+) -> str:
+    """Compatibility alias mapping generate_chat_response to generate_response."""
+    return generate_response(
+        message=message,
+        history=history,
+        enable_web_search=enable_web_search,
+        custom_system_prompt=custom_system_prompt
+    )
+
+
+def stream_chat_response(
+    message: str,
+    history: Optional[list] = None,
+    enable_web_search: bool = False,
+    custom_system_prompt: Optional[str] = None,
+):
+    """Yield chunks of generated text for real-time SSE streaming response with optional persona and web search grounding."""
+    system_prompt = build_system_prompt(custom_system_prompt)
+
+    if enable_web_search:
+        logger.info(f"Performing real-time web search for streaming query: {message}")
+        results = search_web(message)
+        search_ctx = format_search_context(results)
+        if search_ctx:
+            system_prompt += f"\n\n{search_ctx}"
+
+    messages = [{"role": "system", "content": system_prompt}]
+    if history:
+        for chat_item in history:
+            messages.append({"role": "user", "content": chat_item["message"]})
+            messages.append({"role": "assistant", "content": chat_item["response"]})
+    messages.append({"role": "user", "content": message})
+
+    client = _get_groq()
+    streamed_anything = False
+    full_response_chunks = []
+
+    if client:
+        try:
+            completion = client.chat.completions.create(
+                model=_GROQ_MODEL,
+                messages=messages,
+                max_tokens=512,
+                temperature=0.7,
+                stream=True,
+            )
+            for chunk in completion:
+                if chunk.choices and len(chunk.choices) > 0:
+                    delta = chunk.choices[0].delta
+                    if delta and delta.content:
+                        streamed_anything = True
+                        full_response_chunks.append(delta.content)
+                        yield delta.content
+            
+            if streamed_anything:
+                _log_details(messages, _GROQ_MODEL, response_text="".join(full_response_chunks), exception=None)
+        except Exception as exc:
+            _log_details(messages, _GROQ_MODEL, response_text=None, exception=exc)
+
+    if not streamed_anything:
+        fallback_text = _smart_chat(message)
+        _log_details(messages, f"{_GROQ_MODEL} (Fallback to offline)", response_text=fallback_text, exception=None)
+        words = fallback_text.split(" ")
+        for i, word in enumerate(words):
+            yield word + (" " if i < len(words) - 1 else "")
+
+
 
 
 def generate_summary(text: str) -> str:
-    """Summarise text using Groq, with extractive fallback."""
+    """Summarise text using Groq, with extractive fallback and caching."""
     truncated = text[:6000]
+    # Use content hash as cache key to avoid storing large texts as keys
+    import hashlib
+    text_sig = hashlib.md5(truncated.encode()).hexdigest()
+    cached = _cache.get(text_sig, context="summary")
+    if cached:
+        logger.info("Serving summary from cache.")
+        return cached
+
     groq_prompt = (
         "Summarise the following text in 3-5 concise, informative sentences. "
         "Return only the summary, no preamble.\n\n"
@@ -350,8 +617,11 @@ def generate_summary(text: str) -> str:
     )
     result = _call_groq(groq_prompt, max_tokens=300)
     if result:
+        _cache.set(text_sig, result, context="summary", ttl=3600)  # 1 hour for summaries
         return result
-    return _extractive_summary(text)
+    fallback = _extractive_summary(text)
+    _cache.set(text_sig, fallback, context="summary", ttl=3600)
+    return fallback
 
 
 def generate_code(prompt: str, language: str = "python") -> str:

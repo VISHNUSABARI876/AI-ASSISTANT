@@ -1,23 +1,20 @@
 import axios from 'axios'
 
+// Use relative /api so Vite's dev-server proxy forwards to Flask on port 5000.
+// This avoids all browser CORS checks during development.
+// For production, set VITE_API_URL to the absolute backend URL (e.g. https://api.example.com/api).
+const BASE_URL = import.meta.env.VITE_API_URL
+  ? import.meta.env.VITE_API_URL   // absolute URL set explicitly (production)
+  : '/api'                          // relative — routed through Vite proxy (development)
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL: BASE_URL,
   headers: { 'Content-Type': 'application/json' },
   timeout: 60000, // 60s — AI responses can take a while
 })
 
 // Attach JWT to every request
 api.interceptors.request.use((config) => {
-  // Strip leading slash if baseURL is absolute to prevent Axios from discarding /api suffix
-  if (
-    config.baseURL &&
-    config.baseURL.startsWith('http') &&
-    config.url &&
-    config.url.startsWith('/')
-  ) {
-    config.url = config.url.substring(1)
-  }
-
   const token = localStorage.getItem('ai_token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`

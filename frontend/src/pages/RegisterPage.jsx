@@ -1,9 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import {
-  RiRobot2Line, RiUserLine, RiMailLine, RiLockLine, RiEyeLine, RiEyeOffLine,
-} from 'react-icons/ri'
+import { Bot, User, Mail, Lock, Eye, EyeOff, Sparkles } from 'lucide-react'
 import { toast } from 'react-toastify'
 import LoadingSpinner from '../components/UI/LoadingSpinner'
 
@@ -45,75 +43,74 @@ export default function RegisterPage() {
   }
 
   const fields = [
-    { id: 'reg-username', name: 'username', label: 'Username', type: 'text', icon: RiUserLine, placeholder: 'johndoe', autoComplete: 'username' },
-    { id: 'reg-email', name: 'email', label: 'Email', type: 'email', icon: RiMailLine, placeholder: 'you@example.com', autoComplete: 'email' },
-    { id: 'reg-password', name: 'password', label: 'Password', type: 'password', icon: RiLockLine, placeholder: '••••••••', autoComplete: 'new-password' },
-    { id: 'reg-confirm', name: 'confirm', label: 'Confirm Password', type: 'password', icon: RiLockLine, placeholder: '••••••••', autoComplete: 'new-password' },
+    { id: 'reg-username', name: 'username', label: 'Username', type: 'text', icon: User, placeholder: 'johndoe' },
+    { id: 'reg-email', name: 'email', label: 'Email Address', type: 'email', icon: Mail, placeholder: 'name@example.com' },
+    { id: 'reg-password', name: 'password', label: 'Password', type: 'password', icon: Lock, placeholder: '••••••••' },
+    { id: 'reg-confirm', name: 'confirm', label: 'Confirm Password', type: 'password', icon: Lock, placeholder: '••••••••' },
   ]
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-dark-800 p-6">
-      <div className="w-full max-w-md animate-fade-in">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 shadow-glow mb-4">
-            <RiRobot2Line className="text-white text-2xl" />
+    <div className="min-h-screen flex items-center justify-center bg-[#050816] text-white p-6 relative overflow-hidden">
+      {/* Background ambient light */}
+      <div className="absolute top-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-primary-600/20 blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-accent-600/20 blur-[140px] pointer-events-none" />
+      <div className="absolute inset-0 bg-grid-pattern opacity-30 pointer-events-none" />
+
+      <div className="w-full max-w-md glass-card border border-white/10 p-8 shadow-glow-lg animate-fade-in relative z-10 space-y-6">
+        <div className="text-center space-y-2">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 shadow-glow mb-2">
+            <Bot className="w-7 h-7 text-white" />
           </div>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">Create account</h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-2 text-sm">Join AI Assistant — it's free</p>
+          <h1 className="text-2xl font-extrabold text-white flex items-center justify-center gap-2">
+            Initialize AI Account <Sparkles className="w-4 h-4 text-accent-400" />
+          </h1>
+          <p className="text-xs text-slate-400">Create your free AI Operating System profile</p>
         </div>
 
-        {/* Card */}
-        <div className="card p-8 shadow-lg">
-          <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-            {fields.map(({ id, name, label, type, icon: Icon, placeholder, autoComplete }) => (
-              <div key={name}>
-                <label htmlFor={id} className="label">{label}</label>
-                <div className="relative">
-                  <Icon className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-lg" />
-                  <input
-                    id={id}
-                    type={
-                      (name === 'password' || name === 'confirm') && showPassword ? 'text' : type
-                    }
-                    className={`input pl-10 ${errors[name] ? 'input-error' : ''}`}
-                    placeholder={placeholder}
-                    value={form[name]}
-                    onChange={(e) => setForm({ ...form, [name]: e.target.value })}
-                    autoComplete={autoComplete}
-                  />
-                  {(name === 'password' || name === 'confirm') && (
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-                      aria-label="Toggle password visibility"
-                    >
-                      {showPassword ? <RiEyeOffLine className="text-lg" /> : <RiEyeLine className="text-lg" />}
-                    </button>
-                  )}
-                </div>
-                {errors[name] && <p className="text-red-500 text-xs mt-1">{errors[name]}</p>}
+        <form onSubmit={handleSubmit} className="space-y-4 text-xs" noValidate>
+          {fields.map(({ id, name, label, type, icon: Icon, placeholder }) => (
+            <div key={name}>
+              <label htmlFor={id} className="block font-semibold text-slate-300 mb-1">{label}</label>
+              <div className="relative">
+                <Icon className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  id={id}
+                  type={(name === 'password' || name === 'confirm') && showPassword ? 'text' : type}
+                  className={`input-os pl-10 ${errors[name] ? 'border-red-500' : ''}`}
+                  placeholder={placeholder}
+                  value={form[name]}
+                  onChange={(e) => setForm({ ...form, [name]: e.target.value })}
+                />
+                {(name === 'password' || name === 'confirm') && (
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                )}
               </div>
-            ))}
+              {errors[name] && <p className="text-red-400 text-[11px] mt-1">{errors[name]}</p>}
+            </div>
+          ))}
 
-            <button
-              id="register-submit"
-              type="submit"
-              className="btn-primary w-full py-3 text-base"
-              disabled={loading}
-            >
-              {loading ? <LoadingSpinner size="sm" /> : 'Create Account'}
-            </button>
-          </form>
+          <button
+            id="register-submit"
+            type="submit"
+            className="btn-os-primary w-full py-3 text-sm font-bold shadow-glow"
+            disabled={loading}
+          >
+            {loading ? <LoadingSpinner size="sm" /> : 'Create AI Account'}
+          </button>
+        </form>
 
-          <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-5">
-            Already have an account?{' '}
-            <Link to="/login" className="text-primary-600 dark:text-primary-400 font-semibold hover:underline">
-              Sign in
-            </Link>
-          </p>
-        </div>
+        <p className="text-center text-xs text-slate-400 pt-2">
+          Already registered?{' '}
+          <Link to="/login" className="text-primary-400 font-bold hover:underline">
+            Sign In
+          </Link>
+        </p>
       </div>
     </div>
   )

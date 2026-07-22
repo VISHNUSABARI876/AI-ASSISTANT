@@ -1,35 +1,43 @@
+import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
-  RiDashboardLine,
-  RiChat3Line,
-  RiHistoryLine,
-  RiUploadCloud2Line,
-  RiFilePdfLine,
-  RiCodeSSlashLine,
-  RiUserLine,
-  RiSettings4Line,
-  RiRobot2Line,
-  RiLogoutBoxLine,
-} from 'react-icons/ri'
+  LayoutDashboard,
+  MessageSquare,
+  History,
+  UploadCloud,
+  FileText,
+  Code,
+  BookOpen,
+  User,
+  Settings,
+  LogOut,
+  ChevronLeft,
+  ChevronRight,
+  Bot,
+  Sparkles,
+  Zap,
+} from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 
-const navLinks = [
-  { to: '/dashboard', icon: RiDashboardLine, label: 'Dashboard' },
-  { to: '/chat', icon: RiChat3Line, label: 'AI Chat' },
-  { to: '/history', icon: RiHistoryLine, label: 'Chat History' },
-  { to: '/upload', icon: RiUploadCloud2Line, label: 'File Upload' },
-  { to: '/summarize', icon: RiFilePdfLine, label: 'PDF Summarize' },
-  { to: '/codegen', icon: RiCodeSSlashLine, label: 'Code Generator' },
+const mainNavLinks = [
+  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/chat', icon: MessageSquare, label: 'AI Chat' },
+  { to: '/history', icon: History, label: 'Chat History' },
+  { to: '/upload', icon: UploadCloud, label: 'File Upload' },
+  { to: '/summarize', icon: FileText, label: 'Doc Intelligence' },
+  { to: '/codegen', icon: Code, label: 'Code Generator' },
+  { to: '/prompts', icon: BookOpen, label: 'Prompt Library' },
 ]
 
-const bottomLinks = [
-  { to: '/profile', icon: RiUserLine, label: 'Profile' },
-  { to: '/settings', icon: RiSettings4Line, label: 'Settings' },
+const accountNavLinks = [
+  { to: '/profile', icon: User, label: 'Profile' },
+  { to: '/settings', icon: Settings, label: 'Settings' },
 ]
 
 export default function Sidebar({ isOpen, onClose }) {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const [collapsed, setCollapsed] = useState(false)
 
   const handleLogout = () => {
     logout()
@@ -39,102 +47,169 @@ export default function Sidebar({ isOpen, onClose }) {
 
   return (
     <>
-      {/* Mobile overlay */}
+      {/* Mobile Backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm"
+          className="fixed inset-0 bg-slate-950/70 z-40 lg:hidden backdrop-blur-md transition-opacity"
           onClick={onClose}
         />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar Container */}
       <aside
         className={`
           fixed top-0 left-0 h-full z-50 flex flex-col
-          w-[260px] bg-white dark:bg-slate-900
-          border-r border-slate-200 dark:border-slate-700/60
-          transition-transform duration-300 ease-in-out
+          bg-[#0A0F1E]/90 backdrop-blur-2xl border-r border-white/10
+          transition-all duration-300 ease-in-out shadow-card-os
           lg:translate-x-0 lg:static lg:z-auto
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+          ${collapsed ? 'w-20' : 'w-64'}
         `}
       >
-        {/* Logo */}
-        <div className="flex items-center gap-3 px-5 py-5 border-b border-slate-200 dark:border-slate-700/60">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-glow">
-            <RiRobot2Line className="text-white text-xl" />
+        {/* Header & Logo */}
+        <div className="flex items-center justify-between px-4 py-5 border-b border-white/10">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 via-accent-500 to-secondary-500 flex items-center justify-center flex-shrink-0 shadow-glow animate-pulse-slow">
+              <Bot className="w-6 h-6 text-white" />
+            </div>
+            {!collapsed && (
+              <div className="min-w-0 animate-fade-in">
+                <h1 className="font-extrabold text-white text-base leading-tight tracking-tight flex items-center gap-1">
+                  AI OS <Sparkles className="w-3.5 h-3.5 text-accent-400" />
+                </h1>
+                <p className="text-[11px] text-slate-400 font-mono truncate">Groq Engine v3</p>
+              </div>
+            )}
           </div>
-          <div>
-            <h1 className="font-bold text-slate-900 dark:text-white text-sm leading-tight">AI Assistant</h1>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Intelligent Workspace</p>
-          </div>
+
+          {/* Desktop Collapse Toggle */}
+          <button
+            onClick={() => setCollapsed((p) => !p)}
+            className="hidden lg:flex items-center justify-center w-7 h-7 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors border border-white/10"
+            title={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+          >
+            {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+          </button>
         </div>
 
-        {/* User info */}
-        <div className="px-4 py-4 border-b border-slate-100 dark:border-slate-700/40">
-          <div className="flex items-center gap-3 px-2">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-accent-400 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+        {/* User Card */}
+        <div className="p-3 border-b border-white/5">
+          <div className={`flex items-center gap-3 p-2 rounded-xl bg-slate-900/60 border border-white/5 ${collapsed ? 'justify-center' : ''}`}>
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-bold text-sm ring-2 ring-primary-500/40 shadow-glow flex-shrink-0">
               {user?.username?.[0]?.toUpperCase() || 'U'}
             </div>
-            <div className="min-w-0">
-              <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">
-                {user?.username || 'User'}
-              </p>
-              <p className="text-xs text-slate-400 truncate">{user?.email || ''}</p>
-            </div>
+            {!collapsed && (
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-bold text-white truncate">{user?.username || 'User'}</p>
+                <p className="text-[10px] text-slate-400 truncate">{user?.email || 'Active Session'}</p>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Nav links */}
-        <nav className="flex-1 px-3 py-4 overflow-y-auto no-scrollbar">
-          <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-2 mb-2">
-            Main
-          </p>
-          <ul className="space-y-1">
-            {navLinks.map(({ to, icon: Icon, label }) => (
-              <li key={to}>
-                <NavLink
-                  to={to}
-                  onClick={onClose}
-                  className={({ isActive }) =>
-                    isActive ? 'nav-item-active' : 'nav-item'
-                  }
-                >
-                  <Icon className="text-lg flex-shrink-0" />
-                  <span>{label}</span>
-                </NavLink>
-              </li>
-            ))}
-          </ul>
+        {/* Navigation Section */}
+        <nav className="flex-1 px-3 py-4 overflow-y-auto no-scrollbar space-y-6">
+          {/* Main Links */}
+          <div>
+            {!collapsed && (
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">
+                Core OS
+              </p>
+            )}
+            <ul className="space-y-1.5">
+              {mainNavLinks.map(({ to, icon: Icon, label }) => (
+                <li key={to}>
+                  <NavLink
+                    to={to}
+                    onClick={onClose}
+                    className={({ isActive }) => `
+                      relative flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 group
+                      ${collapsed ? 'justify-center px-2' : ''}
+                      ${
+                        isActive
+                          ? 'bg-gradient-to-r from-primary-600/30 to-accent-600/20 text-white border border-primary-500/40 shadow-glow'
+                          : 'text-slate-400 hover:text-white hover:bg-white/5'
+                      }
+                    `}
+                    title={collapsed ? label : undefined}
+                  >
+                    {({ isActive }) => (
+                      <>
+                        {isActive && (
+                          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-primary-400 rounded-r-full shadow-glow" />
+                        )}
+                        <Icon className={`w-5 h-5 flex-shrink-0 transition-transform group-hover:scale-110 ${isActive ? 'text-primary-400' : 'text-slate-400 group-hover:text-white'}`} />
+                        {!collapsed && <span>{label}</span>}
+                      </>
+                    )}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-          <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-2 mb-2 mt-6">
-            Account
-          </p>
-          <ul className="space-y-1">
-            {bottomLinks.map(({ to, icon: Icon, label }) => (
-              <li key={to}>
-                <NavLink
-                  to={to}
-                  onClick={onClose}
-                  className={({ isActive }) =>
-                    isActive ? 'nav-item-active' : 'nav-item'
-                  }
-                >
-                  <Icon className="text-lg flex-shrink-0" />
-                  <span>{label}</span>
-                </NavLink>
-              </li>
-            ))}
-          </ul>
+          {/* Account Links */}
+          <div>
+            {!collapsed && (
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">
+                System
+              </p>
+            )}
+            <ul className="space-y-1.5">
+              {accountNavLinks.map(({ to, icon: Icon, label }) => (
+                <li key={to}>
+                  <NavLink
+                    to={to}
+                    onClick={onClose}
+                    className={({ isActive }) => `
+                      relative flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 group
+                      ${collapsed ? 'justify-center px-2' : ''}
+                      ${
+                        isActive
+                          ? 'bg-gradient-to-r from-primary-600/30 to-accent-600/20 text-white border border-primary-500/40 shadow-glow'
+                          : 'text-slate-400 hover:text-white hover:bg-white/5'
+                      }
+                    `}
+                    title={collapsed ? label : undefined}
+                  >
+                    {({ isActive }) => (
+                      <>
+                        {isActive && (
+                          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-primary-400 rounded-r-full shadow-glow" />
+                        )}
+                        <Icon className={`w-5 h-5 flex-shrink-0 transition-transform group-hover:scale-110 ${isActive ? 'text-primary-400' : 'text-slate-400 group-hover:text-white'}`} />
+                        {!collapsed && <span>{label}</span>}
+                      </>
+                    )}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </div>
         </nav>
 
-        {/* Logout */}
-        <div className="px-3 py-4 border-t border-slate-200 dark:border-slate-700/60">
+        {/* Engine Status Badge */}
+        {!collapsed && (
+          <div className="mx-3 mb-3 p-3 rounded-xl bg-slate-900/80 border border-white/5 flex items-center gap-2.5 text-xs text-slate-300">
+            <Zap className="w-4 h-4 text-emerald-400 animate-pulse" />
+            <div className="min-w-0 flex-1">
+              <p className="font-semibold text-white">System Online</p>
+              <p className="text-[10px] text-slate-400">Response time: ~140ms</p>
+            </div>
+          </div>
+        )}
+
+        {/* Logout Section */}
+        <div className="p-3 border-t border-white/10">
           <button
             onClick={handleLogout}
-            className="nav-item w-full text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-300"
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-all ${
+              collapsed ? 'justify-center px-2' : ''
+            }`}
+            title="Sign Out"
           >
-            <RiLogoutBoxLine className="text-lg" />
-            <span>Sign Out</span>
+            <LogOut className="w-5 h-5 flex-shrink-0" />
+            {!collapsed && <span>Sign Out</span>}
           </button>
         </div>
       </aside>

@@ -40,4 +40,10 @@ export const fileService = {
     const res = await api.post('/ai/generate-code', { prompt, language })
     return res.data
   },
+
+  async queryDocument(fileId, question) {
+    const res = await api.post('/ai/query-doc', { file_id: fileId, question })
+    return res.data
+  },
 }
+

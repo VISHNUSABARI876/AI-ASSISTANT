@@ -1,18 +1,18 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { fileService } from '../services/fileService'
 import {
-  RiUploadCloud2Line, RiFilePdfLine, RiFileTextLine, RiDeleteBinLine,
-  RiCheckLine, RiAlertLine, RiTimeLine,
-} from 'react-icons/ri'
+  UploadCloud,
+  FileText,
+  Trash2,
+  CheckCircle2,
+  Clock,
+  Sparkles,
+  ArrowRight,
+  FileCheck,
+} from 'lucide-react'
 import { toast } from 'react-toastify'
 import { format } from 'date-fns'
 import { PageLoader } from '../components/UI/LoadingSpinner'
-
-const FileIcon = ({ filename }) => {
-  const ext = filename?.split('.').pop()?.toLowerCase()
-  if (ext === 'pdf') return <RiFilePdfLine className="text-red-500 text-2xl" />
-  return <RiFileTextLine className="text-blue-500 text-2xl" />
-}
 
 export default function FileUploadPage() {
   const [files, setFiles] = useState([])
@@ -20,6 +20,7 @@ export default function FileUploadPage() {
   const [uploading, setUploading] = useState(false)
   const [progress, setProgress] = useState(0)
   const [dragOver, setDragOver] = useState(false)
+  const [uploadSuccess, setUploadSuccess] = useState(false)
   const inputRef = useRef(null)
 
   const loadFiles = useCallback(async () => {
@@ -27,13 +28,15 @@ export default function FileUploadPage() {
       const data = await fileService.listFiles()
       setFiles(data.files || [])
     } catch {
-      toast.error('Failed to load files.')
+      toast.error('Failed to load file vault.')
     } finally {
       setLoading(false)
     }
   }, [])
 
-  useEffect(() => { loadFiles() }, [loadFiles])
+  useEffect(() => {
+    loadFiles()
+  }, [loadFiles])
 
   const handleUpload = async (file) => {
     if (!file) return
@@ -49,10 +52,14 @@ export default function FileUploadPage() {
 
     setUploading(true)
     setProgress(0)
+    setUploadSuccess(false)
+
     try {
       const data = await fileService.uploadFile(file, setProgress)
-      toast.success(`"${file.name}" uploaded successfully!`)
+      setUploadSuccess(true)
+      toast.success(`"${file.name}" ingested successfully!`)
       setFiles((prev) => [data.file, ...prev])
+      setTimeout(() => setUploadSuccess(false), 3000)
     } catch (err) {
       toast.error(err.response?.data?.error || 'Upload failed.')
     } finally {
@@ -71,11 +78,11 @@ export default function FileUploadPage() {
   }
 
   const handleDelete = async (id, name) => {
-    if (!window.confirm(`Delete "${name}"?`)) return
+    if (!window.confirm(`Remove file "${name}" from vault?`)) return
     try {
       await fileService.deleteFile(id)
       setFiles((prev) => prev.filter((f) => f.id !== id))
-      toast.success('File deleted.')
+      toast.success('File removed.')
     } catch {
       toast.error('Failed to delete file.')
     }
@@ -84,23 +91,35 @@ export default function FileUploadPage() {
   if (loading) return <PageLoader />
 
   return (
-    <div className="page-container py-8">
-      <h1 className="page-title mb-1">File Upload</h1>
-      <p className="page-subtitle mb-8">Upload PDF and TXT files for AI processing (max 16 MB)</p>
+    <div className="space-y-8 animate-fade-in pb-12">
+      {/* Page Header */}
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-white flex items-center gap-2.5">
+          <UploadCloud className="w-7 h-7 text-primary-400" /> Document Ingestion Hub
+        </h1>
+        <p className="text-sm text-slate-400 mt-1">
+          Upload PDF and TXT documents into the AI context engine (Max 16 MB per file)
+        </p>
+      </div>
 
-      {/* Drop zone */}
+      {/* Drag & Drop Zone */}
       <div
         id="file-drop-zone"
         onDrop={handleDrop}
-        onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
+        onDragOver={(e) => {
+          e.preventDefault()
+          setDragOver(true)
+        }}
         onDragLeave={() => setDragOver(false)}
         onClick={() => !uploading && inputRef.current?.click()}
         className={`
-          relative border-2 border-dashed rounded-3xl p-12 text-center cursor-pointer
-          transition-all duration-200 mb-8
-          ${dragOver
-            ? 'border-primary-400 bg-primary-50 dark:bg-primary-900/20 scale-[1.01]'
-            : 'border-slate-300 dark:border-slate-600 hover:border-primary-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'}
+          relative glass-card border-2 border-dashed rounded-3xl p-10 sm:p-14 text-center cursor-pointer
+          transition-all duration-300 shadow-glow-lg overflow-hidden group
+          ${
+            dragOver
+              ? 'border-primary-400 bg-primary-500/10 scale-[1.01]'
+              : 'border-white/20 hover:border-primary-400/60 hover:bg-slate-900/60'
+          }
           ${uploading ? 'pointer-events-none' : ''}
         `}
       >
@@ -113,72 +132,99 @@ export default function FileUploadPage() {
           onChange={handleFileInput}
           disabled={uploading}
         />
-        <RiUploadCloud2Line className={`text-6xl mx-auto mb-4 ${dragOver ? 'text-primary-500' : 'text-slate-400 dark:text-slate-500'}`} />
-        <p className="text-slate-700 dark:text-slate-300 font-semibold text-lg">
-          {uploading ? 'Uploading...' : 'Drop your file here'}
-        </p>
-        <p className="text-slate-400 dark:text-slate-500 text-sm mt-1">
-          or <span className="text-primary-600 dark:text-primary-400 font-medium">click to browse</span> · PDF, TXT up to 16 MB
-        </p>
 
-        {/* Progress bar */}
-        {uploading && (
-          <div className="mt-6 mx-auto max-w-xs">
-            <div className="flex justify-between text-xs text-slate-500 mb-1">
-              <span>Uploading</span>
-              <span>{progress}%</span>
+        {/* Ambient Gradient Glow */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-primary-500/10 via-accent-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col items-center justify-center space-y-4">
+          {uploadSuccess ? (
+            <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center animate-bounce shadow-glow">
+              <CheckCircle2 className="w-8 h-8" />
             </div>
-            <div className="h-2 bg-slate-200 dark:bg-slate-600 rounded-full overflow-hidden">
+          ) : (
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 text-white flex items-center justify-center shadow-glow group-hover:scale-110 transition-transform">
+              <UploadCloud className="w-8 h-8 animate-pulse" />
+            </div>
+          )}
+
+          <div>
+            <p className="text-lg font-bold text-white">
+              {uploading ? 'Processing File...' : uploadSuccess ? 'Ingestion Complete!' : 'Drag & Drop Document Here'}
+            </p>
+            <p className="text-xs text-slate-400 mt-1">
+              or <span className="text-primary-400 font-semibold underline">Browse local files</span> (PDF, TXT supported)
+            </p>
+          </div>
+
+          {/* Upload Progress Bar */}
+          {uploading && (
+            <div className="w-full max-w-xs space-y-1.5 pt-2">
+              <div className="flex justify-between text-xs text-slate-400 font-mono">
+                <span>Ingesting</span>
+                <span>{progress}%</span>
+              </div>
+              <div className="h-2 bg-slate-900 rounded-full overflow-hidden border border-white/10">
+                <div
+                  className="h-full bg-gradient-to-r from-primary-500 via-accent-500 to-secondary-400 rounded-full transition-all duration-300 shadow-glow"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Uploaded Documents List */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-bold text-white flex items-center justify-between">
+          <span>Ingested Documents</span>
+          <span className="text-xs font-mono text-primary-400 bg-primary-500/10 px-2.5 py-1 rounded-full border border-primary-500/20">
+            {files.length} Saved
+          </span>
+        </h2>
+
+        {files.length === 0 ? (
+          <div className="glass-card p-10 text-center text-slate-400 space-y-2">
+            <FileText className="w-10 h-10 mx-auto text-slate-600 animate-pulse" />
+            <p className="font-semibold text-slate-300">No documents ingested yet.</p>
+          </div>
+        ) : (
+          <div className="grid gap-3">
+            {files.map((file) => (
               <div
-                className="h-full bg-gradient-to-r from-primary-500 to-accent-500 rounded-full transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
+                key={file.id}
+                className="glass-card p-4 flex items-center justify-between gap-4 hover:border-primary-500/40 group transition-all"
+              >
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="w-10 h-10 rounded-xl bg-primary-500/20 text-primary-400 border border-primary-500/30 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                    <FileText className="w-5 h-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-white truncate">{file.filename}</p>
+                    <p className="text-xs text-slate-400 flex items-center gap-1.5 mt-0.5 font-mono">
+                      <Clock className="w-3.5 h-3.5 text-slate-500" />
+                      {file.uploaded_at ? format(new Date(file.uploaded_at), 'MMM d, yyyy · HH:mm') : 'Saved'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 flex-shrink-0">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                    <FileCheck className="w-3.5 h-3.5" /> Ingested
+                  </span>
+                  <button
+                    onClick={() => handleDelete(file.id, file.filename)}
+                    className="p-2 rounded-xl text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                    title="Delete document"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
-
-      {/* Files list */}
-      <h2 className="text-lg font-bold text-slate-800 dark:text-white mb-4">
-        Uploaded Files
-        <span className="ml-2 text-sm font-normal text-slate-400">({files.length})</span>
-      </h2>
-
-      {files.length === 0 ? (
-        <div className="card p-10 text-center">
-          <RiUploadCloud2Line className="text-5xl text-slate-300 dark:text-slate-600 mx-auto mb-3" />
-          <p className="text-slate-500 dark:text-slate-400">No files uploaded yet.</p>
-        </div>
-      ) : (
-        <div className="grid gap-3">
-          {files.map((file) => (
-            <div key={file.id} className="card p-4 flex items-center gap-4 hover:shadow-md transition-shadow">
-              <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center flex-shrink-0">
-                <FileIcon filename={file.filename} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">{file.filename}</p>
-                <p className="text-xs text-slate-400 dark:text-slate-500 flex items-center gap-1 mt-0.5">
-                  <RiTimeLine className="text-xs" />
-                  {file.uploaded_at ? format(new Date(file.uploaded_at), 'MMM d, yyyy · HH:mm') : ''}
-                </p>
-              </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <span className="badge badge-success">
-                  <RiCheckLine className="mr-0.5" /> Ready
-                </span>
-                <button
-                  onClick={() => handleDelete(file.id, file.filename)}
-                  className="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                  title="Delete file"
-                >
-                  <RiDeleteBinLine className="text-sm" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   )
 }

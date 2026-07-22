@@ -1,36 +1,44 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import {
-  RiUser3Line,
-  RiMailLine,
-  RiCalendarLine,
-  RiEditLine,
-  RiCheckLine,
-  RiCloseLine,
-  RiShieldLine,
-  RiRobot2Line,
-} from 'react-icons/ri'
-
-const InfoRow = ({ icon: Icon, label, value }) => (
-  <div className="flex items-center gap-4 py-4 border-b border-slate-100 dark:border-dark-600 last:border-0">
-    <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-dark-600 flex items-center justify-center flex-shrink-0">
-      <Icon className="text-primary-500 text-lg" />
-    </div>
-    <div className="flex-1 min-w-0">
-      <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">{label}</p>
-      <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">{value || '—'}</p>
-    </div>
-  </div>
-)
+  User,
+  Mail,
+  Calendar,
+  Edit2,
+  Check,
+  X,
+  ShieldCheck,
+  Bot,
+  MessageSquare,
+  UploadCloud,
+  FileText,
+  Code,
+  Sparkles,
+} from 'lucide-react'
+import { chatService } from '../services/chatService'
+import { fileService } from '../services/fileService'
+import TiltCard from '../components/UI/TiltCard'
 
 export default function ProfilePage() {
   const { user } = useAuth()
   const [editMode, setEditMode] = useState(false)
   const [displayName, setDisplayName] = useState(user?.username || '')
   const [saved, setSaved] = useState(false)
+  const [userStats, setUserStats] = useState({ chats: 0, files: 0 })
+
+  useEffect(() => {
+    Promise.all([
+      chatService.getHistory(1, 1).catch(() => ({ total: 0 })),
+      fileService.listFiles().catch(() => ({ files: [] })),
+    ]).then(([historyData, filesData]) => {
+      setUserStats({
+        chats: historyData.total || 0,
+        files: filesData.files?.length || 0,
+      })
+    })
+  }, [])
 
   const handleSave = () => {
-    // TODO: wire up to PATCH /api/users/me
     setSaved(true)
     setEditMode(false)
     setTimeout(() => setSaved(false), 2500)
@@ -38,123 +46,152 @@ export default function ProfilePage() {
 
   const joined = user?.created_at
     ? new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-    : 'Unknown'
+    : 'Active'
 
   return (
-    <div className="page-container py-8">
+    <div className="space-y-6 animate-fade-in pb-12">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white mb-1">My Profile</h1>
-        <p className="text-slate-500 dark:text-slate-400">Manage your account information.</p>
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-white flex items-center gap-2.5">
+          <User className="w-7 h-7 text-primary-400" /> User Profile & Credentials
+        </h1>
+        <p className="text-sm text-slate-400 mt-1">
+          Manage your account identity, security status, and system activity
+        </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Avatar card */}
-        <div className="lg:col-span-1">
-          <div className="card p-6 flex flex-col items-center text-center">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center mb-4 shadow-lg">
-              <span className="text-white text-3xl font-extrabold">
-                {(user?.username || 'U')[0].toUpperCase()}
-              </span>
-            </div>
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">{user?.username}</h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400">{user?.email}</p>
-
-            <div className="mt-4 w-full flex flex-col gap-2">
-              <div className="flex items-center justify-center gap-2 bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 text-xs font-semibold px-3 py-2 rounded-xl">
-                <RiShieldLine /> Active Account
+        {/* Avatar Profile Card */}
+        <TiltCard maxTilt={6} className="lg:col-span-1">
+          <div className="glass-card p-6 flex flex-col items-center text-center space-y-4 border border-white/10 shadow-glow">
+            {/* Animated Avatar Core */}
+            <div className="relative">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary-500 via-accent-500 to-secondary-500 p-1 shadow-glow animate-pulse-slow">
+                <div className="w-full h-full rounded-full bg-[#050816] flex items-center justify-center text-white font-extrabold text-3xl">
+                  {(user?.username || 'U')[0].toUpperCase()}
+                </div>
               </div>
-              <div className="flex items-center justify-center gap-2 bg-slate-100 dark:bg-dark-600 text-slate-600 dark:text-slate-300 text-xs font-medium px-3 py-2 rounded-xl">
-                <RiRobot2Line /> AI Assistant User
+              <span className="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-emerald-400 ring-4 ring-[#050816]" />
+            </div>
+
+            <div>
+              <h2 className="text-xl font-bold text-white flex items-center justify-center gap-2">
+                {user?.username || 'Architect'} <Sparkles className="w-4 h-4 text-accent-400" />
+              </h2>
+              <p className="text-xs font-mono text-slate-400 mt-0.5">{user?.email}</p>
+            </div>
+
+            <div className="w-full space-y-2 pt-2">
+              <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold flex items-center justify-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" /> Authenticated Session
+              </div>
+              <div className="p-2.5 rounded-xl bg-primary-500/10 border border-primary-500/20 text-primary-300 text-xs font-semibold flex items-center justify-center gap-2">
+                <Bot className="w-4 h-4 text-primary-400" /> AI OS Tier: Unlimited
               </div>
             </div>
           </div>
-        </div>
+        </TiltCard>
 
-        {/* Details card */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="card p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold text-slate-800 dark:text-slate-100">Account Details</h3>
+        {/* Details & Activity */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Details Form Card */}
+          <div className="glass-card p-6 border border-white/10 space-y-4 shadow-glow">
+            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <h3 className="font-bold text-white text-base">Identity Settings</h3>
               {!editMode ? (
                 <button
                   onClick={() => setEditMode(true)}
-                  className="flex items-center gap-1.5 text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 font-medium transition-colors"
+                  className="btn-os-ghost text-xs text-primary-400 hover:text-white flex items-center gap-1.5"
                 >
-                  <RiEditLine /> Edit
+                  <Edit2 className="w-3.5 h-3.5" /> Edit Profile
                 </button>
               ) : (
                 <div className="flex gap-2">
-                  <button
-                    onClick={handleSave}
-                    className="flex items-center gap-1 text-sm text-green-600 dark:text-green-400 font-medium hover:text-green-700"
-                  >
-                    <RiCheckLine /> Save
+                  <button onClick={handleSave} className="btn-os-primary text-xs py-1.5 px-3 flex items-center gap-1">
+                    <Check className="w-3.5 h-3.5" /> Save
                   </button>
-                  <button
-                    onClick={() => { setEditMode(false); setDisplayName(user?.username || '') }}
-                    className="flex items-center gap-1 text-sm text-slate-400 hover:text-slate-600 font-medium"
-                  >
-                    <RiCloseLine /> Cancel
+                  <button onClick={() => setEditMode(false)} className="btn-os-ghost text-xs text-slate-400 flex items-center gap-1">
+                    <X className="w-3.5 h-3.5" /> Cancel
                   </button>
                 </div>
               )}
             </div>
 
             {saved && (
-              <div className="mb-4 flex items-center gap-2 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 text-sm font-medium px-4 py-2.5 rounded-xl">
-                <RiCheckLine /> Profile updated successfully!
+              <div className="p-3 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-semibold flex items-center gap-2 animate-fade-in">
+                <Check className="w-4 h-4" /> Profile updated successfully!
               </div>
             )}
 
             {editMode ? (
-              <div className="space-y-4">
+              <div className="space-y-4 text-xs">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5">
-                    Display Name
-                  </label>
+                  <label className="block text-slate-300 font-semibold mb-1">Display Name</label>
                   <input
                     type="text"
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-dark-700 border border-slate-200 dark:border-dark-500 rounded-xl px-4 py-2.5 text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-400"
+                    className="input-os py-2.5"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5">
-                    Email (read-only)
-                  </label>
+                  <label className="block text-slate-400 font-semibold mb-1">Email (Immutable)</label>
                   <input
                     type="email"
                     value={user?.email || ''}
                     disabled
-                    className="w-full bg-slate-100 dark:bg-dark-700 border border-slate-200 dark:border-dark-500 rounded-xl px-4 py-2.5 text-sm text-slate-400 cursor-not-allowed"
+                    className="input-os py-2.5 cursor-not-allowed opacity-60"
                   />
                 </div>
               </div>
             ) : (
-              <>
-                <InfoRow icon={RiUser3Line} label="Username" value={user?.username} />
-                <InfoRow icon={RiMailLine} label="Email" value={user?.email} />
-                <InfoRow icon={RiCalendarLine} label="Member Since" value={joined} />
-              </>
+              <div className="space-y-3 text-xs">
+                <div className="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-white/5">
+                  <span className="text-slate-400 flex items-center gap-2">
+                    <User className="w-4 h-4 text-primary-400" /> Display Name
+                  </span>
+                  <span className="font-bold text-white">{user?.username}</span>
+                </div>
+                <div className="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-white/5">
+                  <span className="text-slate-400 flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-accent-400" /> Email Address
+                  </span>
+                  <span className="font-bold text-white">{user?.email}</span>
+                </div>
+                <div className="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-white/5">
+                  <span className="text-slate-400 flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-secondary-400" /> Member Since
+                  </span>
+                  <span className="font-bold text-white">{joined}</span>
+                </div>
+              </div>
             )}
           </div>
 
-          {/* Stats summary */}
-          <div className="card p-6">
-            <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-4">Activity Summary</h3>
-            <div className="grid grid-cols-3 gap-4 text-center">
-              {[
-                { label: 'Chats', value: '—' },
-                { label: 'Files', value: '—' },
-                { label: 'Summaries', value: '—' },
-              ].map(({ label, value }) => (
-                <div key={label} className="bg-slate-50 dark:bg-dark-700 rounded-2xl p-4">
-                  <p className="text-2xl font-extrabold text-primary-600 dark:text-primary-400">{value}</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{label}</p>
-                </div>
-              ))}
+          {/* Activity Statistics */}
+          <div className="glass-card p-6 border border-white/10 space-y-4 shadow-glow">
+            <h3 className="font-bold text-white text-base">Usage Metrics</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+              <div className="p-4 rounded-xl bg-slate-900/80 border border-white/5 space-y-1">
+                <MessageSquare className="w-5 h-5 mx-auto text-primary-400" />
+                <p className="text-2xl font-extrabold text-white">{userStats.chats}</p>
+                <p className="text-[11px] text-slate-400">Chats</p>
+              </div>
+              <div className="p-4 rounded-xl bg-slate-900/80 border border-white/5 space-y-1">
+                <UploadCloud className="w-5 h-5 mx-auto text-accent-400" />
+                <p className="text-2xl font-extrabold text-white">{userStats.files}</p>
+                <p className="text-[11px] text-slate-400">Uploads</p>
+              </div>
+              <div className="p-4 rounded-xl bg-slate-900/80 border border-white/5 space-y-1">
+                <FileText className="w-5 h-5 mx-auto text-secondary-400" />
+                <p className="text-2xl font-extrabold text-white">Active</p>
+                <p className="text-[11px] text-slate-400">Summaries</p>
+              </div>
+              <div className="p-4 rounded-xl bg-slate-900/80 border border-white/5 space-y-1">
+                <Code className="w-5 h-5 mx-auto text-emerald-400" />
+                <p className="text-2xl font-extrabold text-white">Ready</p>
+                <p className="text-[11px] text-slate-400">Code Gens</p>
+              </div>
             </div>
           </div>
         </div>

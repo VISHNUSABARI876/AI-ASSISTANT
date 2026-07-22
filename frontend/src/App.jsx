@@ -1,8 +1,13 @@
-import { useState } from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import Sidebar from './components/Layout/Sidebar'
 import Navbar from './components/Layout/Navbar'
 import ProtectedRoute from './components/Layout/ProtectedRoute'
+import GlobalBackground from './components/UI/GlobalBackground'
+
+import FloatingAIOrb from './components/UI/FloatingAIOrb'
+import CommandPalette from './components/UI/CommandPalette'
+
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import DashboardPage from './pages/DashboardPage'
@@ -13,19 +18,50 @@ import PDFSummarizePage from './pages/PDFSummarizePage'
 import CodeGenPage from './pages/CodeGenPage'
 import ProfilePage from './pages/ProfilePage'
 import SettingsPage from './pages/SettingsPage'
+import SharedChatPage from './pages/SharedChatPage'
+import PromptLibraryPage from './pages/PromptLibraryPage'
 
 function AppLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [paletteOpen, setPaletteOpen] = useState(false)
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault()
+        setPaletteOpen((prev) => !prev)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-dark-800 flex">
+    <div className="min-h-screen bg-[#050816] text-slate-100 flex relative overflow-hidden">
+      {/* Global Background Particles & Aurora Mesh */}
+      <GlobalBackground />
+
+
+
+      {/* Sidebar Component */}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="flex-1 flex flex-col min-w-0 lg:ml-0">
-        <Navbar onMenuClick={() => setSidebarOpen(true)} />
-        <main className="flex-1 overflow-auto animate-fade-in">
+
+      {/* Main Content Workspace */}
+      <div className="flex-1 flex flex-col min-w-0 z-10 relative">
+        <Navbar
+          onMenuClick={() => setSidebarOpen(true)}
+          onOpenPalette={() => setPaletteOpen(true)}
+        />
+        <main className="flex-1 overflow-auto animate-fade-in p-4 sm:p-6 max-w-7xl mx-auto w-full">
           {children}
         </main>
       </div>
+
+      {/* Floating AI Orb Assistant */}
+      <FloatingAIOrb />
+
+      {/* Global Command Palette */}
+      <CommandPalette isOpen={paletteOpen} onClose={() => setPaletteOpen(false)} />
     </div>
   )
 }
@@ -33,11 +69,12 @@ function AppLayout({ children }) {
 export default function App() {
   return (
     <Routes>
-      {/* Public routes */}
+      {/* Public Auth Routes */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route path="/share/:shareId" element={<SharedChatPage />} />
 
-      {/* Protected routes */}
+      {/* Protected Core OS Routes */}
       <Route
         path="/dashboard"
         element={
@@ -102,8 +139,16 @@ export default function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/prompts"
+        element={
+          <ProtectedRoute>
+            <AppLayout><PromptLibraryPage /></AppLayout>
+          </ProtectedRoute>
+        }
+      />
 
-      {/* Default redirect */}
+      {/* Fallback Redirect */}
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>

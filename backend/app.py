@@ -3,9 +3,10 @@ AI Assistant — Flask Backend Entry Point
 """
 import logging
 import os
-from flask import Flask, jsonify
-from flask_cors import CORS
+from flask import Flask, jsonify, request
 from dotenv import load_dotenv
+from flask_cors import CORS
+
 
 load_dotenv()
 
@@ -15,6 +16,10 @@ from routes.auth_routes import auth_bp
 from routes.chat_routes import chat_bp
 from routes.file_routes import file_bp
 from routes.ai_routes import ai_bp
+from routes.persona_routes import persona_bp
+from routes.apikey_routes import apikey_bp
+from routes.share_routes import share_bp
+from routes.cache_routes import cache_bp
 
 # ─── Logging ──────────────────────────────────────────────────────────────────
 logging.basicConfig(
@@ -31,24 +36,23 @@ def create_app() -> Flask:
     Config.init_app(app)
 
     # ─── CORS ─────────────────────────────────────────────────────────────────
-    CORS(
-        app,
-        resources={
-            r"/api/*": {
-                "origins": [
-                    "http://localhost:3000",
-                    "http://127.0.0.1:3000",
-                    "http://localhost:3001",
-                    "http://127.0.0.1:3001",
-                    "http://localhost:5173",
-                    "http://127.0.0.1:5173"
-                ]
-            }
-        },
-        supports_credentials=True,
-        allow_headers=["Content-Type", "Authorization"],
-        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    )
+    CORS(app, resources={
+        r"/api/*": {
+            "origins": [
+                "http://localhost:3000",
+                "http://127.0.0.1:3000",
+                "http://localhost:3001",
+                "http://127.0.0.1:3001",
+                "http://localhost:5173",
+                "http://127.0.0.1:5173"
+            ],
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+            "allow_headers": ["Content-Type", "Authorization", "X-Requested-With"],
+            "expose_headers": ["Content-Type", "Authorization"],
+            "supports_credentials": True,
+            "max_age": 3600
+        }
+    })
 
     # ─── Database ─────────────────────────────────────────────────────────────
     init_db(app)
@@ -58,6 +62,11 @@ def create_app() -> Flask:
     app.register_blueprint(chat_bp)
     app.register_blueprint(file_bp)
     app.register_blueprint(ai_bp)
+    app.register_blueprint(persona_bp)
+    app.register_blueprint(apikey_bp)
+    app.register_blueprint(share_bp)
+    app.register_blueprint(cache_bp)
+
 
     # ─── Health Check ─────────────────────────────────────────────────────────
     @app.get("/")
