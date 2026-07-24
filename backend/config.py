@@ -35,6 +35,15 @@ class Config:
     FLASK_ENV = os.getenv("FLASK_ENV", "production")
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 
+    # Google OAuth
+    GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID", "")
+    GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET", "")
+    GOOGLE_REDIRECT_URI = os.getenv(
+        "GOOGLE_REDIRECT_URI",
+        "http://localhost:5000/api/auth/google/callback",
+    )
+    FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000").rstrip("/")
+
     @staticmethod
     def init_app(app):
         os.makedirs(Config.UPLOAD_FOLDER, exist_ok=True)

@@ -13,6 +13,7 @@ load_dotenv()
 from config import Config
 from database import init_db
 from routes.auth_routes import auth_bp
+from routes.google_auth import google_bp
 from routes.chat_routes import chat_bp
 from routes.file_routes import file_bp
 from routes.ai_routes import ai_bp
@@ -65,6 +66,7 @@ def create_app() -> Flask:
 
     # ─── Blueprints ───────────────────────────────────────────────────────────
     app.register_blueprint(auth_bp)
+    app.register_blueprint(google_bp)
     app.register_blueprint(chat_bp)
     app.register_blueprint(file_bp)
     app.register_blueprint(ai_bp)

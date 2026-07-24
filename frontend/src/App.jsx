@@ -9,6 +9,7 @@ import CommandPalette from './components/UI/CommandPalette'
 
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
+import GoogleCallbackPage from './pages/GoogleCallbackPage'
 import DashboardPage from './pages/DashboardPage'
 import ChatPage from './pages/ChatPage'
 import ChatHistoryPage from './pages/ChatHistoryPage'
@@ -68,6 +69,7 @@ export default function App() {
       {/* Public Auth Routes */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route path="/auth/google/callback" element={<GoogleCallbackPage />} />
       <Route path="/share/:shareId" element={<SharedChatPage />} />
 
       {/* Protected Core OS Routes */}

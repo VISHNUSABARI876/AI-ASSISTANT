@@ -56,6 +56,14 @@ export function AuthProvider({ children }) {
     toast.info('You have been signed out.')
   }, [])
 
+  const loginWithToken = useCallback(async (newToken) => {
+    const data = await authService.getMe(newToken)
+    localStorage.setItem('ai_token', newToken)
+    setToken(newToken)
+    setUser(data.user)
+    return data
+  }, [])
+
   const updateUser = useCallback((updatedUser) => {
     setUser(updatedUser)
   }, [])
@@ -67,6 +75,7 @@ export function AuthProvider({ children }) {
     isAuthenticated: !!user,
     login,
     register,
+    loginWithToken,
     logout,
     updateUser,
   }
