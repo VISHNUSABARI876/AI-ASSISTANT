@@ -17,6 +17,8 @@ import {
 } from 'lucide-react'
 import { chatService } from '../services/chatService'
 import { fileService } from '../services/fileService'
+import { authService } from '../services/authService'
+import { toast } from 'react-toastify'
 import TiltCard from '../components/UI/TiltCard'
 
 export default function ProfilePage() {
@@ -38,10 +40,15 @@ export default function ProfilePage() {
     })
   }, [])
 
-  const handleSave = () => {
-    setSaved(true)
-    setEditMode(false)
-    setTimeout(() => setSaved(false), 2500)
+  const handleSave = async () => {
+    try {
+      await authService.updateProfile({ username: displayName })
+      setSaved(true)
+      setEditMode(false)
+      setTimeout(() => setSaved(false), 2500)
+    } catch {
+      toast.error('Failed to update profile.')
+    }
   }
 
   const joined = user?.created_at

@@ -26,12 +26,9 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401) {
+    if (err.response?.status === 401 && !window.location.pathname.startsWith('/login')) {
       localStorage.removeItem('ai_token')
-      // Reload to trigger auth check (avoids circular dep with context)
-      if (!window.location.pathname.startsWith('/login')) {
-        window.location.href = '/login'
-      }
+      window.location.replace('/login')
     }
     return Promise.reject(err)
   }

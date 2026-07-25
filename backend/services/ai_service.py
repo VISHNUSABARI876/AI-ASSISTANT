@@ -33,8 +33,6 @@ def _get_groq():
 
     _groq_attempted = True
     api_key = os.getenv("GROQ_API_KEY", "").strip()
-    print("GROQ API KEY FOUND:", bool(api_key))
-    print("GROQ API KEY:", api_key[:10] + "..." if api_key else "NOT FOUND")
     if not api_key or api_key == "your_groq_api_key_here":
         logger.warning("GROQ_API_KEY not set — using rule-based fallback.")
         return None

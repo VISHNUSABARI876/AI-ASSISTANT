@@ -25,8 +25,7 @@ export default defineConfig({
         manualChunks: {
           // React core
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          // Animation library
-          'vendor-motion': ['framer-motion'],
+
           // UI icons
           'vendor-icons': ['lucide-react'],
           // Markdown / code highlighting

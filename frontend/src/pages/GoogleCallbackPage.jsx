@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { Bot } from 'lucide-react'
@@ -8,7 +8,6 @@ export default function GoogleCallbackPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const { loginWithToken } = useAuth()
-  const [status, setStatus] = useState('Signing you in...')
 
   useEffect(() => {
     const token = searchParams.get('token')
@@ -26,14 +25,16 @@ export default function GoogleCallbackPage() {
       return
     }
 
-    try {
-      loginWithToken(token)
-      toast.success('Signed in with Google!')
-      navigate('/dashboard', { replace: true })
-    } catch {
-      toast.error('Failed to complete Google sign-in.')
-      navigate('/login', { replace: true })
-    }
+    ;(async () => {
+      try {
+        await loginWithToken(token)
+        toast.success('Signed in with Google!')
+        navigate('/dashboard', { replace: true })
+      } catch {
+        toast.error('Failed to complete Google sign-in.')
+        navigate('/login', { replace: true })
+      }
+    })()
   }, [searchParams, navigate, loginWithToken])
 
   return (
@@ -42,7 +43,7 @@ export default function GoogleCallbackPage() {
         <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-glow animate-pulse-slow mx-auto">
           <Bot className="w-8 h-8 text-white" />
         </div>
-        <p className="text-slate-300 text-lg font-semibold">{status}</p>
+        <p className="text-slate-300 text-lg font-semibold">Signing you in...</p>
         <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto" />
       </div>
     </div>

@@ -62,7 +62,9 @@ export const chatService = {
                 onDone(parsed.chat)
               }
             } catch (e) {
-              console.error('Error parsing SSE data line:', e)
+              if (import.meta.env.DEV) {
+                console.error('Error parsing SSE data line:', e)
+              }
             }
           }
         }

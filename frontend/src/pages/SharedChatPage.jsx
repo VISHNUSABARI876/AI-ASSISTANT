@@ -5,8 +5,7 @@ import { format } from 'date-fns'
 import MarkdownRenderer from '../components/UI/MarkdownRenderer'
 import LoadingSpinner from '../components/UI/LoadingSpinner'
 import { toast } from 'react-toastify'
-
-const API_URL = import.meta.env.VITE_API_URL || '/api'
+import api from '../services/api'
 
 function SharedBubble({ msg }) {
   const isUser = msg.isUser || msg.role === 'user'
@@ -52,12 +51,10 @@ export default function SharedChatPage() {
   useEffect(() => {
     const fetchChat = async () => {
       try {
-        const res = await fetch(`${API_URL}/share/${shareId}`)
-        const data = await res.json()
-        if (!res.ok) throw new Error(data.error || 'Conversation link not found.')
-        setChat(data)
+        const res = await api.get(`/share/${shareId}`)
+        setChat(res.data)
       } catch (err) {
-        setError(err.message)
+        setError(err.response?.data?.error || 'Conversation link not found.')
       } finally {
         setLoading(false)
       }

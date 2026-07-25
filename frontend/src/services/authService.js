@@ -12,9 +12,8 @@ export const authService = {
   },
 
   async getMe(token) {
-    const res = await api.get('/auth/me', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    const headers = token ? { Authorization: `Bearer ${token}` } : {}
+    const res = await api.get('/auth/me', { headers })
     return res.data
   },
 

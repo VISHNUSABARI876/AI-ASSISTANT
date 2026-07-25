@@ -50,13 +50,14 @@ def create_app() -> Flask:
     if frontend_url:
         allowed_origins.append(frontend_url)
 
+    cors_allow_all = os.getenv("CORS_ALLOW_ALL")
     CORS(app, resources={
         r"/*": {
-            "origins": allowed_origins if not os.getenv("CORS_ALLOW_ALL") else "*",
+            "origins": "*" if cors_allow_all else allowed_origins,
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
             "allow_headers": ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
             "expose_headers": ["Content-Type", "Authorization"],
-            "supports_credentials": True,
+            "supports_credentials": not cors_allow_all,
             "max_age": 3600
         }
     })
