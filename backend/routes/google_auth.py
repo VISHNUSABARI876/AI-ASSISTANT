@@ -73,7 +73,14 @@ def google_callback():
     }, timeout=10)
 
     if not token_response.ok:
-        return jsonify({"error": "Failed to exchange authorization code for tokens."}), 400
+        err_details = token_response.text
+        current_app.logger.error(f"Google token exchange failed: {err_details}")
+        try:
+            err_json = token_response.json()
+            err_msg = err_json.get("error_description") or err_json.get("error") or err_details
+        except Exception:
+            err_msg = err_details
+        return jsonify({"error": f"Failed to exchange authorization code for tokens: {err_msg}"}), 400
 
     token_data = token_response.json()
     access_token = token_data.get("access_token")
