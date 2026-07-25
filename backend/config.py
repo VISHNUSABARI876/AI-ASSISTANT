@@ -43,6 +43,8 @@ class Config:
         "http://localhost:5000/api/auth/google/callback",
     )
     FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000").rstrip("/")
+    SESSION_COOKIE_SAMESITE = "Lax"
+    SESSION_COOKIE_SECURE = False
 
     @staticmethod
     def init_app(app):

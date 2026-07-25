@@ -51,7 +51,9 @@ def google_callback():
     if not code or not state:
         return jsonify({"error": "Missing authorization code or state."}), 400
 
-    if state != session.pop("oauth_state", None):
+    expected_state = session.pop("oauth_state", None)
+    if expected_state and state != expected_state:
+        current_app.logger.warning(f"OAuth state mismatch: expected {expected_state}, got {state}")
         return jsonify({"error": "Invalid state parameter. Possible CSRF attack."}), 400
 
     client_id = current_app.config.get("GOOGLE_CLIENT_ID")
