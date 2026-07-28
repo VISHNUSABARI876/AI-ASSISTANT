@@ -119,12 +119,12 @@ export default function PDFSummarizePage() {
       </div>
 
       {/* Mode Navigation Tabs */}
-      <div className="flex gap-2 flex-wrap bg-slate-900/80 p-1.5 rounded-2xl border border-white/10 w-fit">
+      <div className="flex gap-2 flex-wrap bg-white/10 p-1.5 rounded-2xl border border-white/10 w-fit">
         <button
           onClick={() => setMode('file')}
           className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-2 ${
             mode === 'file'
-              ? 'bg-gradient-to-r from-primary-600 to-accent-600 text-white shadow-glow'
+              ? 'bg-primary-500 text-white '
               : 'text-slate-400 hover:text-white'
           }`}
         >
@@ -135,7 +135,7 @@ export default function PDFSummarizePage() {
           onClick={() => setMode('qa')}
           className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-2 ${
             mode === 'qa'
-              ? 'bg-gradient-to-r from-primary-600 to-accent-600 text-white shadow-glow'
+              ? 'bg-primary-500 text-white '
               : 'text-slate-400 hover:text-white'
           }`}
         >
@@ -146,7 +146,7 @@ export default function PDFSummarizePage() {
           onClick={() => setMode('text')}
           className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-2 ${
             mode === 'text'
-              ? 'bg-gradient-to-r from-primary-600 to-accent-600 text-white shadow-glow'
+              ? 'bg-primary-500 text-white '
               : 'text-slate-400 hover:text-white'
           }`}
         >
@@ -157,7 +157,7 @@ export default function PDFSummarizePage() {
       {/* Split Layout Container */}
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Left Side: Input & Document Selector */}
-        <div className="glass-card border border-white/10 p-6 flex flex-col justify-between shadow-glow">
+        <div className="glass-card border border-white/10 p-6 flex flex-col justify-between ">
           <div className="space-y-4">
             <h2 className="font-bold text-white text-base flex items-center gap-2">
               <Cpu className="w-4 h-4 text-primary-400" />
@@ -180,8 +180,8 @@ export default function PDFSummarizePage() {
                       key={file.id}
                       className={`flex items-center gap-3 p-3.5 rounded-xl border cursor-pointer transition-all ${
                         selectedFile === String(file.id)
-                          ? 'border-primary-500 bg-primary-500/15 shadow-glow text-white'
-                          : 'border-white/5 bg-slate-900/60 hover:bg-slate-800 text-slate-300'
+                          ? 'border-primary-500 bg-primary-500/15  text-white'
+                           : 'border-white/5 bg-white/5 hover:bg-white/10 text-slate-300'
                       }`}
                     >
                       <input
@@ -226,7 +226,7 @@ export default function PDFSummarizePage() {
           <button
             onClick={handleAction}
             disabled={loading}
-            className="btn-os-primary w-full py-3 mt-6 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-glow"
+            className="btn-os-primary w-full py-3 mt-6 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 "
           >
             {loading ? (
               <LoadingSpinner size="sm" text="Processing..." />
@@ -240,7 +240,7 @@ export default function PDFSummarizePage() {
         </div>
 
         {/* Right Side: AI Summary Output Editor */}
-        <div className="glass-card border border-white/10 p-6 flex flex-col justify-between shadow-glow">
+        <div className="glass-card border border-white/10 p-6 flex flex-col justify-between ">
           <div>
             <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
               <h2 className="font-bold text-white text-base flex items-center gap-2">
@@ -251,7 +251,7 @@ export default function PDFSummarizePage() {
               {summary && (
                 <div className="flex items-center gap-2">
                   {/* Reading Metrics */}
-                  <span className="text-[11px] font-mono text-slate-400 flex items-center gap-1 bg-slate-900 px-2.5 py-1 rounded-lg border border-white/5">
+                  <span className="text-[11px] font-mono text-slate-400 flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-lg border border-white/5">
                     <Clock className="w-3 h-3 text-accent-400" /> ~{readTimeMin} min read ({wordCount} words)
                   </span>
 
@@ -286,7 +286,7 @@ export default function PDFSummarizePage() {
 
             {summary && (
               <div className="space-y-4 animate-fade-in">
-                <div className="p-4 rounded-xl bg-slate-950/70 border border-white/10 text-xs leading-relaxed max-h-96 overflow-y-auto no-scrollbar">
+                <div className="p-4 rounded-xl bg-white/5 border border-white/10 text-xs leading-relaxed max-h-96 overflow-y-auto no-scrollbar">
                   <MarkdownRenderer content={summary} />
                 </div>
 
@@ -298,7 +298,7 @@ export default function PDFSummarizePage() {
                     </p>
                     <div className="space-y-1.5">
                       {qaSources.map((src) => (
-                        <div key={src.chunk_id} className="p-2.5 rounded-lg bg-slate-900/80 border border-white/5 text-xs text-slate-300">
+                        <div key={src.chunk_id} className="p-2.5 rounded-lg bg-white/10 border border-white/5 text-xs text-slate-300">
                           <span className="text-[10px] font-mono font-bold text-primary-400">Chunk #{src.chunk_id}</span>
                           <p className="text-[11px] text-slate-400 mt-0.5 line-clamp-2">{src.text}</p>
                         </div>

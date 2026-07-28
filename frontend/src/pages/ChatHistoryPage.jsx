@@ -206,7 +206,7 @@ export default function ChatHistoryPage() {
                     className="flex items-start gap-3.5 flex-1 text-left"
                     onClick={() => setExpanded(isExpanded ? null : chat.id)}
                   >
-                    <div className="w-9 h-9 rounded-xl bg-primary-500/20 text-primary-400 border border-primary-500/30 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-glow">
+                    <div className="w-9 h-9 rounded-xl bg-primary-500/20 text-primary-400 border border-primary-500/30 flex items-center justify-center flex-shrink-0 mt-0.5 ">
                       <User className="w-4 h-4" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -253,7 +253,7 @@ export default function ChatHistoryPage() {
                 {/* Expanded AI response */}
                 {isExpanded && (
                   <div className="mt-4 pt-4 border-t border-white/10 flex items-start gap-3 animate-fade-in">
-                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-secondary-500 to-primary-600 text-white flex items-center justify-center flex-shrink-0 text-xs shadow-glow">
+                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-secondary-500 to-primary-600 text-white flex items-center justify-center flex-shrink-0 text-xs ">
                       <Bot className="w-4 h-4" />
                     </div>
                     <div className="flex-1 glass-panel p-4 rounded-xl text-xs leading-relaxed max-h-96 overflow-y-auto no-scrollbar">

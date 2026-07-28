@@ -86,7 +86,7 @@ export default function CodePlayground({ initialCode = '', initialLanguage = 'ja
   }
 
   return (
-    <div className="rounded-2xl border border-white/10 glass-card bg-slate-950 text-slate-100 shadow-glow overflow-hidden my-4">
+    <div className="rounded-2xl border border-white/10 glass-card bg-slate-950 text-slate-100  overflow-hidden my-4">
       {/* Header Bar */}
       <div className="flex items-center justify-between px-4 py-3 bg-slate-900/90 border-b border-white/10 flex-wrap gap-2">
         <div className="flex items-center gap-3">
@@ -119,7 +119,7 @@ export default function CodePlayground({ initialCode = '', initialLanguage = 'ja
           <button
             onClick={runCode}
             disabled={isRunning}
-            className="btn-os-primary text-xs px-4 py-1.5 font-bold flex items-center gap-1.5 shadow-glow"
+            className="btn-os-primary text-xs px-4 py-1.5 font-bold flex items-center gap-1.5 "
           >
             <Play className="w-3.5 h-3.5 fill-white" />
             <span>{isRunning ? 'Running...' : 'Run Code'}</span>
@@ -152,7 +152,7 @@ export default function CodePlayground({ initialCode = '', initialLanguage = 'ja
                 onClick={() => setActiveTab('console')}
                 className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
                   activeTab === 'console'
-                    ? 'bg-primary-600 text-white shadow-glow'
+                    ? 'bg-primary-500 text-white '
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
@@ -163,11 +163,11 @@ export default function CodePlayground({ initialCode = '', initialLanguage = 'ja
                   onClick={() => setActiveTab('preview')}
                   className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
                     activeTab === 'preview'
-                      ? 'bg-primary-600 text-white shadow-glow'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <Eye className="w-3.5 h-3.5" /> Preview
+                    ? 'bg-primary-500 text-white '
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Eye className="w-3.5 h-3.5" /> Preview
                 </button>
               )}
             </div>

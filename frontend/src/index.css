@@ -73,7 +73,7 @@
   }
 }
 
-/* ─── AI OS Glassmorphism & UI Components ───────────────────────────────────── */
+/* ─── Glassmorphism & UI Components ──────────────────────────────────────────── */
 @layer components {
   /* Glass Cards & Containers */
   .glass-card {
@@ -99,7 +99,7 @@
   }
 
   .glass-card-interactive {
-    @apply glass-card cursor-pointer hover:-translate-y-1 hover:border-primary-500/40 hover:shadow-glow;
+    @apply glass-card cursor-pointer hover:-translate-y-1 hover:border-primary-500/40;
   }
 
   .glass-panel {
@@ -118,28 +118,12 @@
     color: #0f172a;
   }
 
-  .neon-border {
-    position: relative;
-  }
-  .neon-border::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.6), rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.6));
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-  }
-
   /* Futuristic Buttons */
   .btn-os-primary {
     @apply relative inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl
-           bg-gradient-to-r from-primary-600 via-accent-500 to-primary-500 text-white font-semibold text-sm
+           bg-primary-500 text-white font-semibold text-sm
            hover:brightness-110 active:scale-95 transition-all duration-200
-           shadow-glow hover:shadow-glow-lg border border-white/20
+           border border-white/20
            focus:outline-none focus:ring-2 focus:ring-primary-400
            disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 overflow-hidden;
   }
@@ -151,7 +135,7 @@
   }
 
   html.dark .btn-os-secondary {
-    @apply bg-slate-900/80 text-slate-200 border border-white/10 hover:border-primary-500/40 hover:bg-slate-800 hover:text-white;
+    @apply bg-white/10 text-slate-200 border border-white/10 hover:border-primary-500/40 hover:bg-white/20 hover:text-white;
   }
 
   html:not(.dark) .btn-os-secondary {
@@ -204,20 +188,6 @@
 
 /* ─── Utilities Layer ───────────────────────────────────────────────────────── */
 @layer utilities {
-  .text-gradient-neon {
-    background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 40%, #8b5cf6 70%, #22d3ee 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .text-glow {
-    text-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
-  }
-
-  .text-glow-cyan {
-    text-shadow: 0 0 15px rgba(6, 182, 212, 0.6);
-  }
-
   .bg-grid-pattern {
     background-size: 32px 32px;
     background-image: 
@@ -227,4 +197,32 @@
 
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}
+
+/* ─── Light Mode Text Color Overrides ──────────────────────────────────────── */
+html:not(.dark) .text-white,
+html:not(.dark) .text-slate-100,
+html:not(.dark) .text-slate-200 {
+  color: #0f172a;
+}
+html:not(.dark) .text-slate-300 {
+  color: #1e293b;
+}
+html:not(.dark) .text-slate-400 {
+  color: #475569;
+}
+html:not(.dark) .text-slate-500 {
+  color: #64748b;
+}
+
+html:not(.dark) .glass-card .text-white,
+html:not(.dark) .glass-card .text-slate-100,
+html:not(.dark) .glass-card .text-slate-200,
+html:not(.dark) .glass-card .text-slate-300 {
+  color: inherit;
+}
+
+html:not(.dark) .btn-os-primary,
+html:not(.dark) .btn-os-secondary {
+  color: #fff;
 }

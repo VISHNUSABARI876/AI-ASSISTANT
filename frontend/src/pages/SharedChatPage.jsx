@@ -12,7 +12,7 @@ function SharedBubble({ msg }) {
   return (
     <div className={`flex items-start gap-3 animate-fade-in ${isUser ? 'flex-row-reverse' : ''}`}>
       <div
-        className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-white text-sm shadow-glow ${
+        className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-white text-sm  ${
           isUser ? 'bg-gradient-to-br from-primary-500 to-accent-500' : 'bg-gradient-to-br from-secondary-500 to-primary-600'
         }`}
       >
@@ -22,7 +22,7 @@ function SharedBubble({ msg }) {
         <div
           className={`rounded-2xl p-4 text-sm leading-relaxed border ${
             isUser
-              ? 'bg-gradient-to-r from-primary-600 to-accent-600 text-white border-primary-400/40 rounded-tr-sm shadow-glow'
+              ? 'bg-primary-500 text-white border-primary-400/40 rounded-tr-sm '
               : 'glass-card text-slate-100 border-white/10 rounded-tl-sm shadow-card-os'
           }`}
         >
@@ -71,7 +71,7 @@ export default function SharedChatPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#050816]">
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-[#050816]">
         <LoadingSpinner size="lg" text="Loading shared AI conversation..." />
       </div>
     )
@@ -79,30 +79,30 @@ export default function SharedChatPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#050816] text-center px-6 space-y-4">
-        <Share2 className="w-12 h-12 text-slate-600 animate-pulse" />
-        <h1 className="text-xl font-bold text-white">Conversation Link Invalid</h1>
-        <p className="text-slate-400 text-xs">{error}</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-[#050816] text-center px-6 space-y-4">
+        <Share2 className="w-12 h-12 text-slate-400 dark:text-slate-600 animate-pulse" />
+        <h1 className="text-xl font-bold text-slate-900 dark:text-white">Conversation Link Invalid</h1>
+        <p className="text-slate-500 dark:text-slate-400 text-xs">{error}</p>
         <Link to="/" className="btn-os-primary text-xs px-6 py-2.5 flex items-center gap-2">
-          <ArrowLeft className="w-4 h-4" /> Return to AI OS
+          <ArrowLeft className="w-4 h-4" /> Return Home
         </Link>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#050816] text-white">
+    <div className="min-h-screen bg-white dark:bg-[#050816] text-slate-900 dark:text-white">
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-[#050816]/80 backdrop-blur-2xl border-b border-white/10 px-6 py-3.5 flex items-center justify-between">
+      <header className="sticky top-0 z-30 bg-white/80 dark:bg-[#050816]/80 backdrop-blur-2xl border-b border-slate-200 dark:border-white/10 px-6 py-3.5 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link to="/" className="btn-os-ghost p-2 rounded-xl text-slate-300">
+          <Link to="/" className="btn-os-ghost p-2 rounded-xl text-slate-500 dark:text-slate-300">
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <div>
-            <h1 className="font-extrabold text-white text-sm flex items-center gap-2">
+            <h1 className="font-extrabold text-slate-900 dark:text-white text-sm flex items-center gap-2">
               {chat.title || 'Shared Neural Session'} <Sparkles className="w-3.5 h-3.5 text-accent-400" />
             </h1>
-            <p className="text-[11px] text-slate-400 font-mono">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
               {chat.view_count} view{chat.view_count !== 1 ? 's' : ''} · Public Shared View
             </p>
           </div>
@@ -124,12 +124,12 @@ export default function SharedChatPage() {
       </main>
 
       {/* Footer CTA */}
-      <footer className="border-t border-white/10 py-8 text-center bg-slate-950/80 backdrop-blur-xl">
-        <p className="text-xs text-slate-400 mb-3">
-          Shared session generated with AI Operating System
+      <footer className="border-t border-slate-200 dark:border-white/10 py-8 text-center bg-slate-100 dark:bg-slate-950/80 backdrop-blur-xl">
+        <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">
+          Shared session generated with AI Assistant
         </p>
-        <Link to="/" className="btn-os-primary text-xs px-6 py-3 font-bold inline-flex items-center gap-2 shadow-glow">
-          <Bot className="w-4 h-4" /> Launch AI OS Free
+        <Link to="/" className="btn-os-primary text-xs px-6 py-3 font-bold inline-flex items-center gap-2 ">
+          <Bot className="w-4 h-4" /> Launch Free
         </Link>
       </footer>
     </div>

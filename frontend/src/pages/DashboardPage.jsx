@@ -17,7 +17,6 @@ import {
   Zap,
   Cpu,
   Database,
-  Search,
   Trash2,
   Terminal,
   Activity,
@@ -42,7 +41,6 @@ export default function DashboardPage() {
   const [cacheStats, setCacheStats] = useState(null)
   const [recentChats, setRecentChats] = useState([])
   const [loading, setLoading] = useState(true)
-  const [searchQuery, setSearchQuery] = useState('')
   const [currentTime, setCurrentTime] = useState(new Date())
 
   useEffect(() => {
@@ -73,8 +71,8 @@ export default function DashboardPage() {
     load()
   }, [])
 
-  const handlePromptClick = (promptText) => {
-    sessionStorage.setItem('inject_prompt', promptText)
+  const handlePromptClick = (prompt) => {
+    sessionStorage.setItem('inject_prompt', prompt)
     navigate('/chat')
   }
 
@@ -89,12 +87,6 @@ export default function DashboardPage() {
     }
   }
 
-  const filteredChats = recentChats.filter(
-    (c) =>
-      c.message?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.response?.toLowerCase().includes(searchQuery.toLowerCase())
-  )
-
   const hour = currentTime.getHours()
   const greeting = hour < 5 ? 'Good night' : hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
 
@@ -103,7 +95,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8 animate-fade-in pb-12">
       {/* Animated Hero Section */}
-      <div className="relative rounded-3xl overflow-hidden glass-card border border-white/10 p-6 sm:p-10 shadow-glow-lg">
+      <div className="relative rounded-3xl overflow-hidden glass-card border border-white/10 p-6 sm:p-10">
         {/* Ambient Aurora Gradient Background */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-primary-600/30 blur-[100px] animate-aurora" />
@@ -115,11 +107,11 @@ export default function DashboardPage() {
           <div className="space-y-3 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-500/10 border border-primary-500/30 text-primary-300 text-xs font-semibold backdrop-blur-md">
               <Sparkles className="w-3.5 h-3.5 text-accent-400" />
-              <span>AI Operating System Core Active</span>
+              <span>Neural AI Core Active</span>
             </div>
 
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
-              {greeting}, <span className="text-gradient-neon">{user?.username || 'Architect'}</span>! 👋
+              {greeting}, <span className="text-primary-300">{user?.username || 'Architect'}</span>! 👋
             </h1>
 
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
@@ -134,17 +126,12 @@ export default function DashboardPage() {
                 <Clock className="w-3.5 h-3.5" />
                 {format(currentTime, 'EEEE, MMM d, yyyy · HH:mm:ss')}
               </span>
-              <span className="hidden sm:inline text-slate-600">•</span>
-              <span className="hidden sm:flex items-center gap-1 text-emerald-400">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                Groq LLM Connected
-              </span>
             </div>
           </div>
 
           {/* Glowing Animated AI Core Orb */}
           <div className="flex flex-col sm:flex-row items-center gap-4 self-stretch lg:self-auto">
-            <div className="relative w-28 h-28 rounded-full bg-slate-900/90 border border-white/20 flex items-center justify-center shadow-glow group cursor-pointer hover:scale-105 transition-transform">
+            <div className="relative w-28 h-28 rounded-full bg-slate-900/90 border border-white/20 flex items-center justify-center  group cursor-pointer hover:scale-105 transition-transform">
               <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-primary-500 via-accent-500 to-secondary-500 animate-spin-slow opacity-60 blur-md" />
               <div className="relative z-10 w-20 h-20 rounded-full bg-[#050816] flex items-center justify-center border border-white/20">
                 <Bot className="w-10 h-10 text-primary-400 animate-pulse" />
@@ -154,9 +141,9 @@ export default function DashboardPage() {
             <div className="flex flex-col gap-2.5 w-full sm:w-auto">
               <Link
                 to="/chat"
-                className="btn-os-primary text-xs sm:text-sm px-6 py-3 rounded-2xl flex items-center justify-center gap-2 shadow-glow"
+                className="btn-os-primary text-xs sm:text-sm px-6 py-3 rounded-2xl flex items-center justify-center gap-2 "
               >
-                <MessageSquare className="w-4 h-4" /> Start Neural Chat
+                <MessageSquare className="w-4 h-4" /> Start Ask Me Anything
               </Link>
               <Link
                 to="/prompts"
@@ -178,9 +165,9 @@ export default function DashboardPage() {
               <button
                 key={prompt}
                 onClick={() => handlePromptClick(prompt)}
-                className="px-3.5 py-1.5 rounded-xl bg-slate-900/80 hover:bg-primary-600/30 text-slate-300 hover:text-white border border-white/10 hover:border-primary-500/40 text-xs font-medium backdrop-blur-md transition-all duration-200 active:scale-95 shadow-sm flex items-center gap-1.5"
+                className="px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-primary-500 text-slate-300 hover:text-white border border-white/10 hover:border-primary-500/40 text-xs font-medium backdrop-blur-md transition-all duration-200 active:scale-95 shadow-sm flex items-center gap-1.5"
               >
-                <Sparkles className="w-3 h-3 text-accent-400" />
+                <Sparkles className="w-3 h-3 text-primary-400" />
                 {prompt}
               </button>
             ))}
@@ -198,7 +185,7 @@ export default function DashboardPage() {
                 <h3 className="text-3xl font-extrabold text-white mt-1">{stats.chats ?? '—'}</h3>
                 <p className="text-[11px] text-slate-500 mt-1">All-time stored chats</p>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-primary-500/20 text-primary-400 border border-primary-500/30 flex items-center justify-center group-hover:scale-110 transition-transform shadow-glow">
+              <div className="w-12 h-12 rounded-2xl bg-primary-500/20 text-primary-400 border border-primary-500/30 flex items-center justify-center group-hover:scale-110 transition-transform ">
                 <MessageSquare className="w-6 h-6" />
               </div>
             </div>
@@ -213,7 +200,7 @@ export default function DashboardPage() {
                 <h3 className="text-3xl font-extrabold text-white mt-1">{stats.files ?? '—'}</h3>
                 <p className="text-[11px] text-slate-500 mt-1">PDFs & Documents</p>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-accent-500/20 text-accent-400 border border-accent-500/30 flex items-center justify-center group-hover:scale-110 transition-transform shadow-glow">
+              <div className="w-12 h-12 rounded-2xl bg-accent-500/20 text-accent-400 border border-accent-500/30 flex items-center justify-center group-hover:scale-110 transition-transform ">
                 <UploadCloud className="w-6 h-6" />
               </div>
             </div>
@@ -230,7 +217,7 @@ export default function DashboardPage() {
                 </h3>
                 <p className="text-[11px] text-slate-500 mt-1">Fast cached responses</p>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-secondary-500/20 text-secondary-400 border border-secondary-500/30 flex items-center justify-center group-hover:scale-110 transition-transform shadow-glow">
+              <div className="w-12 h-12 rounded-2xl bg-secondary-500/20 text-secondary-400 border border-secondary-500/30 flex items-center justify-center group-hover:scale-110 transition-transform ">
                 <Database className="w-6 h-6" />
               </div>
             </div>
@@ -245,7 +232,7 @@ export default function DashboardPage() {
                 <h3 className="text-3xl font-extrabold text-white mt-1">22</h3>
                 <p className="text-[11px] text-slate-500 mt-1">8 Specialized categories</p>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center group-hover:scale-110 transition-transform shadow-glow">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center group-hover:scale-110 transition-transform ">
                 <BookOpen className="w-6 h-6" />
               </div>
             </div>
@@ -257,23 +244,23 @@ export default function DashboardPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <Activity className="w-5 h-5 text-primary-400" /> OS Action Launchpad
+            <Activity className="w-5 h-5 text-primary-400" /> Action Launchpad
           </h2>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { title: 'Neural Chat', desc: 'Groq streaming AI', icon: MessageSquare, to: '/chat', color: 'from-primary-600 to-accent-600' },
-            { title: 'Code Studio', desc: 'Interactive sandbox', icon: Code, to: '/codegen', color: 'from-accent-600 to-rose-600' },
-            { title: 'Doc Intelligence', desc: 'RAG PDF analysis', icon: FileText, to: '/summarize', color: 'from-amber-500 to-orange-600' },
-            { title: 'File Upload', desc: 'Document ingestion', icon: UploadCloud, to: '/upload', color: 'from-emerald-500 to-teal-600' },
+            { title: 'Ask Me Anything', desc: 'Groq streaming AI', icon: MessageSquare, to: '/chat', color: 'bg-primary-500' },
+            { title: 'Code Generator', desc: 'Interactive sandbox', icon: Code, to: '/codegen', color: 'bg-accent-600' },
+            { title: 'Doc Intelligence', desc: 'RAG PDF analysis', icon: FileText, to: '/summarize', color: 'bg-amber-600' },
+            { title: 'File Upload', desc: 'Document ingestion', icon: UploadCloud, to: '/upload', color: 'bg-emerald-600' },
           ].map(({ title, desc, icon: Icon, to, color }) => (
             <Link
               key={title}
               to={to}
               className="glass-card p-5 block hover:-translate-y-1 transition-all duration-200 group border border-white/10 hover:border-primary-500/40"
             >
-              <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${color} flex items-center justify-center text-white shadow-glow mb-3 group-hover:scale-110 transition-transform`}>
+              <div className={`w-10 h-10 rounded-xl ${color} flex items-center justify-center text-white  mb-3 group-hover:scale-110 transition-transform`}>
                 <Icon className="w-5 h-5" />
               </div>
               <h3 className="font-bold text-white text-sm group-hover:text-primary-300 transition-colors">{title}</h3>
@@ -285,29 +272,16 @@ export default function DashboardPage() {
 
       {/* Recent Conversations */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div className="flex items-center justify-between flex-wrap gap-3">
           <h2 className="text-xl font-bold text-white flex items-center gap-2">
             <Clock className="w-5 h-5 text-accent-400" /> Recent Conversations
           </h2>
-
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                placeholder="Search history..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="input-os py-1.5 pl-9 pr-3 text-xs w-48"
-              />
-            </div>
-            <Link to="/history" className="text-xs text-primary-400 hover:text-primary-300 font-semibold flex items-center gap-1">
-              View Vault <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
+          <Link to="/history" className="text-xs text-primary-400 hover:text-primary-300 font-semibold flex items-center gap-1">
+            View Vault <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
 
-        {filteredChats.length === 0 ? (
+        {recentChats.length === 0 ? (
           <div className="glass-card p-10 text-center text-slate-400 space-y-3">
             <Bot className="w-10 h-10 mx-auto text-slate-600 animate-pulse" />
             <p className="font-semibold text-slate-300">No matching conversations found.</p>
@@ -317,7 +291,7 @@ export default function DashboardPage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {filteredChats.map((chat) => (
+            {recentChats.map((chat) => (
               <Link
                 key={chat.id}
                 to="/history"

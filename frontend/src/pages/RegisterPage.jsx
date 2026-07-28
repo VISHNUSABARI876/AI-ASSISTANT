@@ -56,15 +56,15 @@ export default function RegisterPage() {
       <div className="absolute bottom-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-accent-600/20 blur-[140px] pointer-events-none" />
       <div className="absolute inset-0 bg-grid-pattern opacity-30 pointer-events-none" />
 
-      <div className="w-full max-w-md glass-card border border-white/10 p-8 shadow-glow-lg animate-fade-in relative z-10 space-y-6">
+      <div className="w-full max-w-md glass-card border border-white/10 p-8 animate-fade-in relative z-10 space-y-6">
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 shadow-glow mb-2">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500  mb-2">
             <Bot className="w-7 h-7 text-white" />
           </div>
           <h1 className="text-2xl font-extrabold text-white flex items-center justify-center gap-2">
             Initialize AI Account <Sparkles className="w-4 h-4 text-accent-400" />
           </h1>
-          <p className="text-xs text-slate-400">Create your free AI Operating System profile</p>
+          <p className="text-xs text-slate-400">Create your free AI profile</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 text-xs" noValidate>
@@ -98,7 +98,7 @@ export default function RegisterPage() {
           <button
             id="register-submit"
             type="submit"
-            className="btn-os-primary w-full py-3 text-sm font-bold shadow-glow"
+            className="btn-os-primary w-full py-3 text-sm font-bold "
             disabled={loading}
           >
             {loading ? <LoadingSpinner size="sm" /> : 'Create AI Account'}

@@ -13,7 +13,6 @@ export default {
           card: '#0F172A',
           cardHover: '#1E293B',
           border: 'rgba(255, 255, 255, 0.08)',
-          glow: 'rgba(99, 102, 241, 0.15)',
         },
         primary: {
           50:  '#eef2ff',
@@ -59,7 +58,6 @@ export default {
         'spin-slow': 'spin 8s linear infinite',
         'aurora': 'aurora 20s ease infinite',
         'float': 'float 6s ease-in-out infinite',
-        'glow-pulse': 'glowPulse 3s ease-in-out infinite',
         'dash': 'dash 20s linear infinite',
       },
       keyframes: {
@@ -83,10 +81,6 @@ export default {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%': { transform: 'translateY(-10px)' },
         },
-        glowPulse: {
-          '0%, 100%': { opacity: '0.4', filter: 'blur(20px)' },
-          '50%': { opacity: '0.8', filter: 'blur(30px)' },
-        },
         dash: {
           to: { strokeDashoffset: '-100' },
         },
@@ -96,13 +90,9 @@ export default {
         'aurora-mesh': 'linear-gradient(135deg, #050816 0%, #0c122c 25%, #180b38 50%, #05192d 75%, #050816 100%)',
         'glass-gradient': 'linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)',
         'glass-dark': 'linear-gradient(135deg, rgba(15, 23, 42, 0.7) 0%, rgba(5, 8, 22, 0.8) 100%)',
-        'neon-primary': 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
-        'neon-cyan': 'linear-gradient(135deg, #06B6D4 0%, #6366F1 100%)',
+
       },
       boxShadow: {
-        'glow': '0 0 25px rgba(99, 102, 241, 0.35)',
-        'glow-lg': '0 0 50px rgba(139, 92, 246, 0.45)',
-        'glow-cyan': '0 0 25px rgba(6, 182, 212, 0.35)',
         'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
         'card-os': '0 4px 30px rgba(0, 0, 0, 0.4)',
       },

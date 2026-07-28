@@ -114,7 +114,7 @@ export default function FileUploadPage() {
         onClick={() => !uploading && inputRef.current?.click()}
         className={`
           relative glass-card border-2 border-dashed rounded-3xl p-10 sm:p-14 text-center cursor-pointer
-          transition-all duration-300 shadow-glow-lg overflow-hidden group
+          transition-all duration-300 overflow-hidden group
           ${
             dragOver
               ? 'border-primary-400 bg-primary-500/10 scale-[1.01]'
@@ -138,11 +138,11 @@ export default function FileUploadPage() {
 
         <div className="relative z-10 flex flex-col items-center justify-center space-y-4">
           {uploadSuccess ? (
-            <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center animate-bounce shadow-glow">
+            <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center animate-bounce ">
               <CheckCircle2 className="w-8 h-8" />
             </div>
           ) : (
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 text-white flex items-center justify-center shadow-glow group-hover:scale-110 transition-transform">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 text-white flex items-center justify-center  group-hover:scale-110 transition-transform">
               <UploadCloud className="w-8 h-8 animate-pulse" />
             </div>
           )}
@@ -165,7 +165,7 @@ export default function FileUploadPage() {
               </div>
               <div className="h-2 bg-slate-900 rounded-full overflow-hidden border border-white/10">
                 <div
-                  className="h-full bg-gradient-to-r from-primary-500 via-accent-500 to-secondary-400 rounded-full transition-all duration-300 shadow-glow"
+                  className="h-full bg-gradient-to-r from-primary-500 via-accent-500 to-secondary-400 rounded-full transition-all duration-300 "
                   style={{ width: `${progress}%` }}
                 />
               </div>

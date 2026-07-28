@@ -134,8 +134,8 @@ export default function PromptLibraryPage() {
             onClick={() => setActiveCategory(id)}
             className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
               activeCategory === id
-                ? 'bg-gradient-to-r from-primary-600 to-accent-600 text-white shadow-glow border border-primary-400/40'
-                : 'bg-slate-900/60 text-slate-400 hover:text-white border border-white/5'
+                ? 'bg-primary-500 text-white  border border-primary-400/40'
+                : 'bg-white/5 text-slate-400 hover:text-white border border-white/5'
             }`}
           >
             <Icon className="w-3.5 h-3.5" />
@@ -148,7 +148,7 @@ export default function PromptLibraryPage() {
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {filtered.map((template) => (
           <TiltCard key={template.id} maxTilt={6}>
-            <div className="glass-card p-5 border border-white/10 flex flex-col justify-between space-y-4 h-full shadow-glow">
+            <div className="glass-card p-5 border border-white/10 flex flex-col justify-between space-y-4 h-full ">
               <div className="space-y-2">
                 <div className="flex items-start gap-3">
                   <span className="text-2xl flex-shrink-0">{template.emoji}</span>

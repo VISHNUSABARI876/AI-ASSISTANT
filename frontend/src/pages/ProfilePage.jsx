@@ -70,10 +70,10 @@ export default function ProfilePage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Avatar Profile Card */}
         <TiltCard maxTilt={6} className="lg:col-span-1">
-          <div className="glass-card p-6 flex flex-col items-center text-center space-y-4 border border-white/10 shadow-glow">
+          <div className="glass-card p-6 flex flex-col items-center text-center space-y-4 border border-white/10 ">
             {/* Animated Avatar Core */}
             <div className="relative">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary-500 via-accent-500 to-secondary-500 p-1 shadow-glow animate-pulse-slow">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary-500 via-accent-500 to-secondary-500 p-1  animate-pulse-slow">
                 <div className="w-full h-full rounded-full bg-[#050816] flex items-center justify-center text-white font-extrabold text-3xl">
                   {(user?.username || 'U')[0].toUpperCase()}
                 </div>
@@ -93,7 +93,7 @@ export default function ProfilePage() {
                 <ShieldCheck className="w-4 h-4 text-emerald-400" /> Authenticated Session
               </div>
               <div className="p-2.5 rounded-xl bg-primary-500/10 border border-primary-500/20 text-primary-300 text-xs font-semibold flex items-center justify-center gap-2">
-                <Bot className="w-4 h-4 text-primary-400" /> AI OS Tier: Unlimited
+                <Bot className="w-4 h-4 text-primary-400" /> Unlimited Tier
               </div>
             </div>
           </div>
@@ -102,7 +102,7 @@ export default function ProfilePage() {
         {/* Details & Activity */}
         <div className="lg:col-span-2 space-y-6">
           {/* Details Form Card */}
-          <div className="glass-card p-6 border border-white/10 space-y-4 shadow-glow">
+          <div className="glass-card p-6 border border-white/10 space-y-4 ">
             <div className="flex items-center justify-between border-b border-white/10 pb-4">
               <h3 className="font-bold text-white text-base">Identity Settings</h3>
               {!editMode ? (
@@ -176,7 +176,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Activity Statistics */}
-          <div className="glass-card p-6 border border-white/10 space-y-4 shadow-glow">
+          <div className="glass-card p-6 border border-white/10 space-y-4 ">
             <h3 className="font-bold text-white text-base">Usage Metrics</h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
               <div className="p-4 rounded-xl bg-slate-900/80 border border-white/5 space-y-1">

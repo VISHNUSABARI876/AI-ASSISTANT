@@ -5,11 +5,9 @@ import {
   Copy,
   Check,
   Trash2,
-  Lightbulb,
   Sparkles,
   Play,
   Terminal,
-  Cpu,
   Download,
 } from 'lucide-react'
 import api from '../services/api'
@@ -27,13 +25,6 @@ const LANGUAGE_OPTIONS = [
   'Rust',
   'SQL',
   'Bash',
-]
-
-const EXAMPLE_PROMPTS = [
-  'Write a Python function to sort a list of dictionaries by a key',
-  'Create a React custom hook for data fetching with loading and error states',
-  'Write an optimized SQL query to find duplicate rows in a table',
-  'Implement a binary search algorithm in JavaScript with detailed comments',
 ]
 
 function extractCode(raw) {
@@ -104,16 +95,15 @@ export default function CodeGenPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-white flex items-center gap-2.5">
-          <Code className="w-7 h-7 text-primary-400" /> AI Code Studio
+          <Code className="w-7 h-7 text-primary-400" /> Code Generator
         </h1>
         <p className="text-sm text-slate-400 mt-1">
           Instruct the AI to generate production-ready code with interactive sandbox execution
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left main panel */}
-        <div className="lg:col-span-2 space-y-6">
+      <div className="grid grid-cols-1 gap-6">
+        <div className="space-y-6">
           {/* Language bar */}
           <div className="glass-card border border-white/10 p-5 space-y-3">
             <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
@@ -126,8 +116,8 @@ export default function CodeGenPage() {
                   onClick={() => setLanguage(lang)}
                   className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
                     language === lang
-                      ? 'bg-gradient-to-r from-primary-600 to-accent-600 text-white shadow-glow'
-                      : 'bg-slate-900/60 hover:bg-slate-800 text-slate-400 hover:text-white border border-white/5'
+                      ? 'bg-primary-500 text-white '
+                      : 'bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white border border-white/5'
                   }`}
                 >
                   {lang}
@@ -157,7 +147,7 @@ export default function CodeGenPage() {
                 <button
                   onClick={handleGenerate}
                   disabled={loading || !prompt.trim()}
-                  className="btn-os-primary px-5 py-2.5 text-xs font-bold flex items-center gap-2 shadow-glow"
+                  className="btn-os-primary px-5 py-2.5 text-xs font-bold flex items-center gap-2 "
                 >
                   {loading ? (
                     <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
@@ -209,34 +199,7 @@ export default function CodeGenPage() {
           )}
         </div>
 
-        {/* Right side prompts */}
-        <div className="space-y-6">
-          <div className="glass-card border border-white/10 p-5 space-y-3">
-            <div className="flex items-center gap-2 text-amber-400 font-bold text-xs uppercase tracking-wider">
-              <Lightbulb className="w-4 h-4 fill-amber-400" /> Example Code Prompts
-            </div>
-            <div className="space-y-2">
-              {EXAMPLE_PROMPTS.map((ex) => (
-                <button
-                  key={ex}
-                  onClick={() => setPrompt(ex)}
-                  className="w-full text-left text-xs text-slate-300 hover:text-white bg-slate-900/60 hover:bg-slate-800 p-3 rounded-xl border border-white/5 hover:border-primary-500/30 transition-all leading-snug"
-                >
-                  {ex}
-                </button>
-              ))}
-            </div>
-          </div>
 
-          <div className="glass-card border border-white/10 p-5 bg-gradient-to-br from-primary-600/10 to-accent-600/10 space-y-2">
-            <p className="text-xs font-bold text-primary-300 flex items-center gap-1.5">
-              <Cpu className="w-4 h-4 text-accent-400" /> Pro Engineering Tip
-            </p>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Include specific parameters, return data types, and error handling edge cases in your prompt for maximum accuracy.
-            </p>
-          </div>
-        </div>
       </div>
     </div>
   )

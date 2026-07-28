@@ -50,7 +50,7 @@ export default function CommandPalette({ isOpen, onClose }) {
     },
     {
       id: 'nav-codegen',
-      label: 'AI Code Studio',
+      label: 'Code Generator',
       category: 'Navigation',
       icon: Code,
       action: () => navigate('/codegen'),
@@ -150,7 +150,7 @@ export default function CommandPalette({ isOpen, onClose }) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-xl glass-card border border-white/10 overflow-hidden shadow-glow-lg"
+        className="w-full max-w-xl glass-card border border-white/10 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Input Bar */}
@@ -187,7 +187,7 @@ export default function CommandPalette({ isOpen, onClose }) {
                   onMouseEnter={() => setSelectedIndex(idx)}
                   className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-left text-sm transition-all ${
                     isSelected
-                      ? 'bg-gradient-to-r from-primary-600/90 to-accent-600/90 text-white shadow-glow border border-primary-400/40'
+                      ? 'bg-primary-500/90 text-white  border border-primary-400/40'
                       : 'text-slate-300 hover:bg-white/5'
                   }`}
                 >
@@ -208,7 +208,7 @@ export default function CommandPalette({ isOpen, onClose }) {
         <div className="px-4 py-2.5 bg-slate-950/80 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400">
           <div className="flex items-center gap-2">
             <Command className="w-3.5 h-3.5 text-primary-400" />
-            <span>AI OS Command Palette</span>
+            <span>Command Palette</span>
           </div>
           <div className="flex items-center gap-3 font-mono">
             <span>↑↓ Navigate</span>

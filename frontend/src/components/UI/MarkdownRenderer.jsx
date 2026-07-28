@@ -42,7 +42,7 @@ function CodeBlock({ language, code }) {
   }
 
   return (
-    <div className="relative my-3 rounded-xl overflow-hidden border border-white/10 shadow-glow">
+    <div className="relative my-3 rounded-xl overflow-hidden border border-white/10 ">
       {/* Code Header Bar */}
       <div className="flex items-center justify-between px-4 py-2 bg-slate-900 text-slate-300 text-xs font-mono border-b border-white/10">
         <span className="uppercase font-bold tracking-wider text-primary-400">
@@ -50,7 +50,7 @@ function CodeBlock({ language, code }) {
         </span>
         <button
           onClick={handleCopy}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-800/60 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-colors"
           title="Copy code to clipboard"
         >
           {copied ? (

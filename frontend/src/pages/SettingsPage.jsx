@@ -113,9 +113,9 @@ export default function SettingsPage() {
       </div>
 
       {/* OS Preferences & Switches */}
-      <div className="glass-card border border-white/10 p-6 space-y-6 shadow-glow">
+      <div className="glass-card border border-white/10 p-6 space-y-6 ">
         <h2 className="text-base font-bold text-white flex items-center gap-2">
-          <Zap className="w-4 h-4 text-accent-400" /> AI OS Preferences
+          <Zap className="w-4 h-4 text-accent-400" /> App Preferences
         </h2>
 
         <div className="space-y-4 text-xs">
@@ -131,7 +131,7 @@ export default function SettingsPage() {
             <button
               onClick={toggleTheme}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                isDark ? 'bg-primary-600' : 'bg-slate-700'
+                isDark ? 'bg-primary-500' : 'bg-slate-700'
               }`}
             >
               <span
@@ -151,7 +151,7 @@ export default function SettingsPage() {
             <button
               onClick={() => setAnimationEnabled((p) => !p)}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                animationEnabled ? 'bg-primary-600' : 'bg-slate-700'
+                animationEnabled ? 'bg-primary-500' : 'bg-slate-700'
               }`}
             >
               <span
@@ -193,8 +193,8 @@ export default function SettingsPage() {
                   onClick={() => setResponseLength(len)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                     responseLength === len
-                      ? 'bg-primary-600 text-white shadow-glow'
-                      : 'bg-slate-800 text-slate-400 hover:text-white'
+                      ? 'bg-primary-500 text-white '
+                      : 'bg-white/10 text-slate-400 hover:text-white'
                   }`}
                 >
                   {len}
@@ -206,7 +206,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Developer API Key Manager */}
-      <div className="glass-card border border-white/10 p-6 space-y-6 shadow-glow">
+      <div className="glass-card border border-white/10 p-6 space-y-6 ">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-base font-bold text-white flex items-center gap-2">
@@ -216,7 +216,7 @@ export default function SettingsPage() {
           </div>
           <button
             onClick={() => setShowCreate((p) => !p)}
-            className="btn-os-primary text-xs py-2 px-4 flex items-center gap-1.5 shadow-glow"
+            className="btn-os-primary text-xs py-2 px-4 flex items-center gap-1.5 "
           >
             <Plus className="w-4 h-4" /> New Key
           </button>

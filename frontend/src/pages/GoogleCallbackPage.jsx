@@ -40,7 +40,7 @@ export default function GoogleCallbackPage() {
   return (
     <div className="min-h-screen bg-[#050816] flex items-center justify-center">
       <div className="text-center space-y-4">
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-glow animate-pulse-slow mx-auto">
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center  animate-pulse-slow mx-auto">
           <Bot className="w-8 h-8 text-white" />
         </div>
         <p className="text-slate-300 text-lg font-semibold">Signing you in...</p>

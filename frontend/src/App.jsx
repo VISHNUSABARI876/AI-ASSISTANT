@@ -21,7 +21,7 @@ export default function AppLayout({ children }) {
   }, [])
 
   return (
-    <div className="min-h-screen bg-[#050816] text-slate-100 flex relative overflow-hidden">
+    <div className="min-h-screen bg-white dark:bg-[#050816] text-slate-900 dark:text-slate-100 flex relative overflow-hidden">
       {/* Global Background Particles & Aurora Mesh */}
       <GlobalBackground />
 
@@ -29,10 +29,9 @@ export default function AppLayout({ children }) {
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       {/* Main Content Workspace */}
-      <div className="flex-1 flex flex-col min-w-0 z-10 relative">
+      <div className="flex-1 flex flex-col min-w-0 z-10 relative lg:ml-64">
         <Navbar
           onMenuClick={() => setSidebarOpen(true)}
-          onOpenPalette={() => setPaletteOpen(true)}
         />
         <main className="flex-1 overflow-auto animate-fade-in p-4 sm:p-6 max-w-7xl mx-auto w-full">
           {children}
