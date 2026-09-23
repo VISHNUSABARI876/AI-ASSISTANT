@@ -22,7 +22,9 @@ _groq_available = False
 _groq_attempted = False
 
 # Default model — fast & capable; override with GROQ_MODEL env var
-_GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
+def get_groq_model() -> str:
+    return os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+
 
 
 def _get_groq():
@@ -107,9 +109,10 @@ def _call_groq(prompt_or_messages, max_tokens: int = 512, system_prompt: Optiona
         logger.warning("Groq client not available, using fallback rule-based chat.")
         return None
 
+    groq_model = get_groq_model()
     try:
         completion = client.chat.completions.create(
-            model=_GROQ_MODEL,
+            model=groq_model,
             messages=messages,
             max_tokens=max_tokens,
             temperature=0.7,
@@ -120,12 +123,12 @@ def _call_groq(prompt_or_messages, max_tokens: int = 512, system_prompt: Optiona
             text = text.strip()
         if not text:
             logger.warning(f"Groq returned empty content. Finish reason: {choice.finish_reason}")
-            _log_details(messages, _GROQ_MODEL, response_text="[EMPTY RESPONSE]", exception=None)
+            _log_details(messages, groq_model, response_text="[EMPTY RESPONSE]", exception=None)
             return None
-        _log_details(messages, _GROQ_MODEL, response_text=text, exception=None)
+        _log_details(messages, groq_model, response_text=text, exception=None)
         return text
     except Exception as exc:
-        _log_details(messages, _GROQ_MODEL, response_text=None, exception=exc)
+        _log_details(messages, groq_model, response_text=None, exception=exc)
         return None
 
 
@@ -427,7 +430,7 @@ def generate_response(
     logger.info(
         f"\n--- BACKEND LANGUAGE FLOW AUDIT ---\n"
         f"System prompt: {system_prompt}\n"
-        f"Model used: {_GROQ_MODEL}\n"
+        f"Model used: {get_groq_model()}\n"
         f"------------------------------------"
     )
 
@@ -565,10 +568,11 @@ def stream_chat_response(
     streamed_anything = False
     full_response_chunks = []
 
+    groq_model = get_groq_model()
     if client:
         try:
             completion = client.chat.completions.create(
-                model=_GROQ_MODEL,
+                model=groq_model,
                 messages=messages,
                 max_tokens=512,
                 temperature=0.7,
@@ -583,13 +587,13 @@ def stream_chat_response(
                         yield delta.content
             
             if streamed_anything:
-                _log_details(messages, _GROQ_MODEL, response_text="".join(full_response_chunks), exception=None)
+                _log_details(messages, groq_model, response_text="".join(full_response_chunks), exception=None)
         except Exception as exc:
-            _log_details(messages, _GROQ_MODEL, response_text=None, exception=exc)
+            _log_details(messages, groq_model, response_text=None, exception=exc)
 
     if not streamed_anything:
         fallback_text = _smart_chat(message)
-        _log_details(messages, f"{_GROQ_MODEL} (Fallback to offline)", response_text=fallback_text, exception=None)
+        _log_details(messages, f"{groq_model} (Fallback to offline)", response_text=fallback_text, exception=None)
         words = fallback_text.split(" ")
         for i, word in enumerate(words):
             yield word + (" " if i < len(words) - 1 else "")
