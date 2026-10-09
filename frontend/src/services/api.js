@@ -10,7 +10,7 @@ const BASE_URL = import.meta.env.VITE_API_URL
 const api = axios.create({
   baseURL: BASE_URL,
   headers: { 'Content-Type': 'application/json' },
-  timeout: 60000, // 60s — AI responses can take a while
+  timeout: 120000, // 120s — AI responses and Render cold starts can take a while
 })
 
 // Attach JWT to every request
@@ -45,7 +45,15 @@ api.interceptors.response.use(
       console.error('[API Unknown Error]', err);
     }
     
-    // Attach customized message to error object
+    // Attach customized message so UI toasts show the exact reason (e.g. timeout, CORS)
+    if (!err.response) {
+      err.response = { data: { error: errorMessage } };
+    } else if (!err.response.data) {
+      err.response.data = { error: errorMessage };
+    } else if (!err.response.data.error) {
+      err.response.data.error = errorMessage;
+    }
+    
     err.customMessage = errorMessage;
     
     return Promise.reject(err);
