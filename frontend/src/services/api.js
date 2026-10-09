@@ -26,11 +26,29 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401 && !window.location.pathname.startsWith('/login')) {
-      localStorage.removeItem('ai_token')
-      window.location.replace('/login')
+    let errorMessage = 'An unexpected error occurred.';
+    
+    if (err.code === 'ECONNABORTED' || err.message.includes('timeout')) {
+      errorMessage = 'Request timed out. Please try again.';
+      console.error('[API Timeout]', err);
+    } else if (err.message === 'Network Error') {
+      errorMessage = 'Network error or CORS failure. Backend may be unreachable.';
+      console.error('[API Network/CORS Error]', err);
+    } else if (err.response) {
+      errorMessage = `HTTP Error ${err.response.status}: ${err.response.data?.error || err.message}`;
+      console.error(`[API HTTP Error ${err.response.status}]`, err.response.data);
+      if (err.response.status === 401 && !window.location.pathname.startsWith('/login')) {
+        localStorage.removeItem('ai_token');
+        window.location.replace('/login');
+      }
+    } else {
+      console.error('[API Unknown Error]', err);
     }
-    return Promise.reject(err)
+    
+    // Attach customized message to error object
+    err.customMessage = errorMessage;
+    
+    return Promise.reject(err);
   }
 )
 

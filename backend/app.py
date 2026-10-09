@@ -3,6 +3,8 @@ AI Assistant — Flask Backend Entry Point
 """
 import logging
 import os
+import re
+import time
 from flask import Flask, jsonify, request
 from dotenv import load_dotenv
 from flask_cors import CORS
@@ -45,7 +47,7 @@ def create_app() -> Flask:
         "http://127.0.0.1:3001",
         "http://localhost:5173",
         "http://127.0.0.1:5173",
-        r"https://.*\.vercel\.app"
+        re.compile(r"https://.*\.vercel\.app")
     ]
     if frontend_url:
         allowed_origins.append(frontend_url)
@@ -116,6 +118,27 @@ def create_app() -> Flask:
         import traceback
         logger.error(f"Internal server error: {e}\n{traceback.format_exc()}")
         return jsonify({"error": "An internal server error occurred.", "details": str(e)}), 500
+
+    @app.before_request
+    def start_timer():
+        request.start_time = time.time()
+
+    @app.after_request
+    def log_request(response):
+        if request.path == '/api/health':
+            return response
+        
+        duration = time.time() - getattr(request, 'start_time', time.time())
+        duration_ms = round(duration * 1000, 2)
+        
+        # Avoid logging sensitive paths or limit payload dumping
+        safe_path = request.path
+        
+        logger.info(
+            f"Method: {request.method} | Route: {safe_path} | "
+            f"Status: {response.status_code} | Duration: {duration_ms}ms"
+        )
+        return response
 
     logger.info("AI Assistant backend initialized successfully.")
     return app
